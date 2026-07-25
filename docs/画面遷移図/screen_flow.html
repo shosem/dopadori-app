@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>衝動代替アプリ — 画面遷移図</title>
+<style>
+  :root{
+    --bg:#ece7df; --ink:#43352b; --sub:#a58a76; --muted:#8a8d96;
+    --cream:#fef6ee; --cream2:#fff2e4; --card:#ffffff;
+    --accent:#f0895b; --accent2:#7fb5a6; --soft:#ffd9c4; --line:#ffe0cd;
+    --flow:#c98a63;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:"Hiragino Maru Gothic ProN","Segoe UI Rounded",-apple-system,"Noto Sans JP",sans-serif;
+    background:var(--bg); color:var(--ink); padding:40px 24px 100px;
+  }
+  h1{font-size:1.5rem; letter-spacing:-0.01em;}
+  .intro{color:var(--sub); font-size:0.88rem; margin:8px 0 4px; max-width:720px;}
+  .legend{display:flex; flex-wrap:wrap; gap:10px; margin:18px 0 40px; font-size:0.76rem;}
+  .legend span{background:var(--card); border:1px solid var(--line); padding:5px 12px; border-radius:999px; color:var(--sub);}
+  .legend b{color:var(--flow);}
+
+  .zone{max-width:1240px; margin:0 auto 26px;}
+  .zone-title{font-size:0.82rem; letter-spacing:0.08em; color:var(--flow); font-weight:700; margin-bottom:16px; text-transform:uppercase; display:flex; align-items:center; gap:10px;}
+  .zone-title::after{content:""; flex:1; height:1px; background:#d9cfc3;}
+
+  .row{display:flex; align-items:flex-start; flex-wrap:wrap; gap:14px;}
+
+  /* connector between screens in a row */
+  .arrow{align-self:center; color:var(--flow); font-size:1.4rem; flex:0 0 auto; padding-top:70px;}
+  .arrow small{display:block; font-size:0.62rem; color:var(--sub); text-align:center; line-height:1.3; margin-top:2px; max-width:80px;}
+
+  /* screen card */
+  .sc{width:186px; flex:0 0 auto; background:var(--card); border-radius:22px; padding:0; box-shadow:0 8px 20px rgba(240,137,91,0.1); overflow:hidden; border:1px solid #f6e7db;}
+  .sc .bar{background:var(--accent); color:#fff; font-size:0.68rem; padding:6px 12px; letter-spacing:0.03em; display:flex; justify-content:space-between; align-items:center;}
+  .sc .bar .id{opacity:0.85; font-size:0.6rem;}
+  .sc .body{padding:12px 12px 14px; min-height:200px; display:flex; flex-direction:column; background:linear-gradient(180deg,var(--cream2),var(--cream)); }
+  .sc.plain .body{background:var(--cream);}
+
+  .lbl{font-size:0.6rem; color:var(--sub); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:3px;}
+  .h{font-size:0.82rem; font-weight:700; margin-bottom:2px;}
+  .t{font-size:0.68rem; color:var(--sub); line-height:1.5;}
+
+  .card-mini{background:var(--card); border-radius:12px; padding:8px 10px; box-shadow:0 3px 8px rgba(240,137,91,0.08); margin-top:8px;}
+  .num{font-size:1.5rem; font-weight:800; color:var(--accent); line-height:1;}
+  .field{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:7px 9px; font-size:0.62rem; color:#c9ab97; margin-top:7px;}
+  .btn{background:var(--accent); color:#fff; border-radius:12px; text-align:center; padding:9px; font-size:0.68rem; font-weight:700; margin-top:8px;}
+  .btn.g{background:var(--accent2);}
+  .btn.ghost{background:var(--card); color:var(--accent); border:1px solid var(--line); font-weight:700;}
+  .sub-link{font-size:0.62rem; color:var(--sub); text-align:center; margin-top:8px;}
+  .chips{display:flex; gap:5px; margin-top:6px;}
+  .chip{font-size:0.58rem; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:3px 9px; color:var(--sub);}
+  .bars{display:flex; align-items:flex-end; gap:3px; height:38px; margin-top:8px;}
+  .bars i{flex:1; background:var(--soft); border-radius:3px;}
+  .bars i.h{background:var(--accent);}
+  .circle{width:66px;height:66px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ffb38f,var(--accent)); margin:10px auto 6px; box-shadow:0 6px 16px rgba(240,137,91,0.35);}
+  .listrow{display:flex; justify-content:space-between; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:6px 9px; font-size:0.62rem; margin-top:6px; color:var(--ink);}
+  .listrow .st{font-size:0.54rem; color:var(--sub);}
+  .spacer{flex:1;}
+  .ratio{font-size:0.55rem; color:var(--accent2); font-weight:700; margin-top:6px;}
+
+  .note-block{max-width:1240px; margin:34px auto 0; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px;}
+  .note-block h3{font-size:0.9rem; margin-bottom:8px;}
+  .note-block ul{margin:0; padding-left:18px;}
+  .note-block li{font-size:0.78rem; color:var(--sub); margin-bottom:5px; line-height:1.5;}
+  .branch-note{font-size:0.62rem; color:var(--flow); margin-top:8px; font-weight:700;}
+</style>
+</head>
+<body>
+  <h1>画面遷移図 — 衝動代替アプリ</h1>
+  <p class="intro">案2(親しみ・安らぎ / 絵文字なし)のトーンで、主要画面をワイヤーフレーム化し、矢印で遷移を繋いでいます。各画面上部のタグは仮の画面名です。</p>
+  <div class="legend">
+    <span><b>→</b> 画面遷移</span>
+    <span>オレンジ = 主アクション(衝動・落ち着いた)</span>
+    <span>緑 = 代替行動系</span>
+    <span>白カード = 任意入力・情報</span>
+  </div>
+
+  <!-- ZONE A: AUTH -->
+  <div class="zone">
+    <div class="zone-title">A. 認証</div>
+    <div class="row">
+      <div class="sc plain">
+        <div class="bar"><span>ログイン</span><span class="id">S-01</span></div>
+        <div class="body">
+          <div class="h">おかえりなさい</div>
+          <div class="t">メールとパスワードで<br>ログイン</div>
+          <div class="field">メールアドレス</div>
+          <div class="field">パスワード</div>
+          <div class="btn">ログイン</div>
+          <div class="sub-link">はじめての方はこちら →</div>
+        </div>
+      </div>
+      <div class="arrow">→<small>新規登録へ</small></div>
+      <div class="sc plain">
+        <div class="bar"><span>新規登録</span><span class="id">S-02</span></div>
+        <div class="body">
+          <div class="h">はじめまして</div>
+          <div class="t">アカウントを作成</div>
+          <div class="field">ニックネーム</div>
+          <div class="field">メールアドレス</div>
+          <div class="field">パスワード</div>
+          <div class="btn">登録する</div>
+          <div class="branch-note">登録時:マザーデータ(代替行動)を自動でコピー配布</div>
+        </div>
+      </div>
+      <div class="arrow">→<small>登録/ログイン成功</small></div>
+      <div class="sc">
+        <div class="bar"><span>トップへ</span><span class="id">S-03</span></div>
+        <div class="body" style="justify-content:center;align-items:center;">
+          <div class="t" style="text-align:center;">↓<br>トップ画面(B)へ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZONE B: HOME -->
+  <div class="zone">
+    <div class="zone-title">B. トップ(ホーム)</div>
+    <div class="row">
+      <div class="sc">
+        <div class="bar"><span>トップ</span><span class="id">S-03</span></div>
+        <div class="body">
+          <div class="lbl">おかえりなさい</div>
+          <div class="card-mini" style="text-align:center;">
+            <div class="num">7</div>
+            <div class="t">日連続、向き合えています</div>
+          </div>
+          <div class="lbl" style="margin-top:9px;">今週の衝動の回数</div>
+          <div class="bars"><i></i><i class="h"></i><i></i><i class="h"></i><i></i><i></i><i></i></div>
+          <div class="btn" style="margin-top:auto;">衝動がきた</div>
+          <div class="sub-link">あとから記録する</div>
+        </div>
+      </div>
+      <div class="arrow">→<small>「衝動がきた」</small></div>
+      <div class="sc">
+        <div class="bar"><span>衝動ボタン中</span><span class="id">S-04</span></div>
+        <div class="body" style="justify-content:center;">
+          <div class="circle"></div>
+          <div class="t" style="text-align:center;">すって、3・2・1…<br><span style="color:var(--accent2);font-weight:700;">連打+3-3-6呼吸 ×3</span></div>
+          <div class="t" style="text-align:center;margin-top:8px;color:#c9ab97;">36秒後、自動で次へ</div>
+        </div>
+      </div>
+      <div class="arrow">→<small>36秒経過</small></div>
+      <div class="sc">
+        <div class="bar"><span>連打後の入力</span><span class="id">S-05</span></div>
+        <div class="body">
+          <div class="lbl">トリガー(任意)</div>
+          <div class="chips"><span class="chip">暇なとき</span><span class="chip">作業中</span></div>
+          <div class="ratio">▲ 比率 1</div>
+          <div class="lbl" style="margin-top:7px;">メモ(任意)</div>
+          <div class="field">きっかけがあれば…</div>
+          <div class="ratio">▲ 比率 2</div>
+          <div class="spacer"></div>
+          <div class="btn">落ち着いた</div>
+          <div class="btn g">代替行動を選ぶ</div>
+          <div class="ratio">▲ 比率 7(主役)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZONE C: AFTER URGE BRANCH -->
+  <div class="zone">
+    <div class="zone-title">C. 連打後の分岐</div>
+    <div class="row">
+      <div class="sc">
+        <div class="bar"><span>連打後の入力</span><span class="id">S-05</span></div>
+        <div class="body" style="justify-content:center;align-items:center;">
+          <div class="t" style="text-align:center;">2つの選択肢<br>↓ それぞれ分岐</div>
+        </div>
+      </div>
+      <div class="arrow">→<small>「落ち着いた」<br>resolved=calmed</small></div>
+      <div class="sc">
+        <div class="bar"><span>完了</span><span class="id">S-06</span></div>
+        <div class="body" style="justify-content:center;">
+          <div class="h" style="text-align:center;">よくがんばりました</div>
+          <div class="t" style="text-align:center;margin-top:6px;">元の作業に戻りましょう</div>
+          <div class="btn ghost" style="margin-top:14px;">トップに戻る</div>
+        </div>
+      </div>
+      <div class="arrow">↘<small>「代替行動を選ぶ」<br>resolved=took_action</small></div>
+      <div class="sc">
+        <div class="bar"><span>代替行動の提案</span><span class="id">S-07</span></div>
+        <div class="body">
+          <div class="lbl">今すぐできること</div>
+          <div class="listrow">拍手を10回思いきり <span class="st">即</span></div>
+          <div class="lbl" style="margin-top:8px;">時間があるなら</div>
+          <div class="listrow">5分歩く <span class="st">少し</span></div>
+          <div class="lbl" style="margin-top:8px;">準備ができるなら</div>
+          <div class="listrow">サウナに行く <span class="st">準備</span></div>
+          <div class="sub-link">他の行動を選ぶ →</div>
+          <div class="branch-note">各time_spanから1つずつランダム / 空枠は非表示</div>
+        </div>
+      </div>
+      <div class="arrow">→<small>「他の行動を選ぶ」</small></div>
+      <div class="sc plain">
+        <div class="bar"><span>代替行動 全一覧</span><span class="id">S-08</span></div>
+        <div class="body">
+          <div class="lbl">あなたの代替行動</div>
+          <div class="listrow">拍手を10回 <span class="st">即</span></div>
+          <div class="listrow">腕立て10回 <span class="st">少し</span></div>
+          <div class="listrow">5分歩く <span class="st">少し</span></div>
+          <div class="listrow">サウナに行く <span class="st">準備</span></div>
+          <div class="sub-link">＋ 行動を追加・編集(D)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZONE D: ALT ACTIONS MANAGE -->
+  <div class="zone">
+    <div class="zone-title">D. 代替行動の管理</div>
+    <div class="row">
+      <div class="sc plain">
+        <div class="bar"><span>代替行動 一覧/管理</span><span class="id">S-09</span></div>
+        <div class="body">
+          <div class="lbl">登録済みの行動</div>
+          <div class="listrow">拍手を10回 <span class="st">即 ⋯</span></div>
+          <div class="listrow">腕立て10回 <span class="st">少し ⋯</span></div>
+          <div class="listrow">5分歩く <span class="st">少し ⋯</span></div>
+          <div class="btn" style="margin-top:auto;">＋ 新しい行動を追加</div>
+        </div>
+      </div>
+      <div class="arrow">→<small>追加/編集</small></div>
+      <div class="sc plain">
+        <div class="bar"><span>行動の追加・編集</span><span class="id">S-10</span></div>
+        <div class="body">
+          <div class="lbl">行動名</div>
+          <div class="field">例:積んでる本を1ページ読む</div>
+          <div class="lbl" style="margin-top:8px;">かかる時間</div>
+          <div class="chips"><span class="chip">即</span><span class="chip">少し</span><span class="chip">準備</span></div>
+          <div class="btn" style="margin-top:auto;">保存する</div>
+          <div class="branch-note">Turbo Framesで一覧の一部だけ更新</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZONE E: RECORDS + VIEWED -->
+  <div class="zone">
+    <div class="zone-title">E. 記録の閲覧 と「見てしまった」の記録</div>
+    <div class="row">
+      <div class="sc">
+        <div class="bar"><span>トップ</span><span class="id">S-03</span></div>
+        <div class="body" style="justify-content:center;align-items:center;">
+          <div class="t" style="text-align:center;">「あとから記録する」<br>↓</div>
+        </div>
+      </div>
+      <div class="arrow">→<small>記録入口</small></div>
+      <div class="sc plain">
+        <div class="bar"><span>見てしまった記録</span><span class="id">S-11</span></div>
+        <div class="body">
+          <div class="h" style="font-size:0.76rem;">記録しますか?</div>
+          <div class="t" style="margin-top:4px;">責めずに、淡々と残します</div>
+          <div class="btn g" style="margin-top:10px;">過去の記録から選ぶ</div>
+          <div class="btn ghost" style="margin-top:8px;">記録せず見てしまった</div>
+        </div>
+      </div>
+      <div class="arrow">↗<small>(A)過去1週間<br>から選ぶ</small></div>
+      <div class="sc plain">
+        <div class="bar"><span>記録一覧</span><span class="id">S-12</span></div>
+        <div class="body">
+          <div class="lbl">最近の記録</div>
+          <div class="listrow">今日 14:20 <span class="st">落ち着いた</span></div>
+          <div class="listrow">今日 11:05 <span class="st">代替行動</span></div>
+          <div class="listrow">昨日 23:40 <span class="st">未選択 ⋯</span></div>
+          <div class="branch-note">各行を「見てしまった」に更新可(viewed)</div>
+        </div>
+      </div>
+      <div class="arrow">↘<small>(B)新規作成</small></div>
+      <div class="sc plain">
+        <div class="bar"><span>新規(見てしまった)</span><span class="id">S-13</span></div>
+        <div class="body">
+          <div class="t">新しく記録を作成<br>(resolved=viewed)</div>
+          <div class="lbl" style="margin-top:8px;">トリガー(任意)</div>
+          <div class="chips"><span class="chip">暇なとき</span><span class="chip">作業中</span></div>
+          <div class="lbl" style="margin-top:7px;">メモ(任意)</div>
+          <div class="field">きっかけがあれば…</div>
+          <div class="btn" style="margin-top:auto;">記録する</div>
+          <div class="branch-note">S-05の入力UIを使い回し</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-block">
+    <h3>補足メモ</h3>
+    <ul>
+      <li><b>S-04(衝動ボタン中)</b>は、連打+3-3-6呼吸を3セット=36秒。サーバー通信なしのStimulus+CSSアニメーション。詳細は app_concept.md 3章。</li>
+      <li><b>S-05(連打後の入力)</b>の縦比率 1:2:7(トリガー:メモ:アクション)。任意入力を小さく、主役の2ボタンを大きく。急ぐ人は上を無視して即タップできる。</li>
+      <li><b>S-07(代替行動の提案)</b>は各 time_span から1つずつランダム提案。immediate を主役に、下へ「時間があるなら」で降りていく。登録0件の枠は非表示。</li>
+      <li><b>viewed(見てしまった)</b>は S-04〜S-05 のフロー内には出さず、必ず E ゾーンの別入口から記録する(過去の結果と未来の宣言を混ぜない)。</li>
+      <li>S-12(記録一覧)は、E の「過去から選ぶ」と、MVPの「記録の閲覧」を兼ねられる可能性がある(実装時に判断)。</li>
+      <li>画面名・S番号は仮。実装時に確定。</li>
+    </ul>
+  </div>
+</body>
+</html>
