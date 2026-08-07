@@ -1,3 +1,5 @@
-web: env RUBY_DEBUG_OPEN=true bin/rails server
+# Rails 7.1 以降、development の既定バインドは 127.0.0.1。
+# コンテナ内 localhost のままだと compose のポート公開(3200->3000)が届かないため 0.0.0.0 で待ち受ける。
+web: env RUBY_DEBUG_OPEN=true bin/rails server -b 0.0.0.0
 js: yarn build --watch
 css: yarn build:css --watch

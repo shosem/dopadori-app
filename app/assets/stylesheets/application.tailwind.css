@@ -1,1 +1,38 @@
 @import "tailwindcss";
+
+/* v4 はこの CSS ファイルの位置を基点にソースを自動検出するため、
+   app/assets/stylesheets/ 配下からでは app/views/ に届かない。明示する。 */
+@source "../../views";
+@source "../../helpers";
+@source "../../javascript";
+
+/* docs/design_guideline.md「案2 親しみ / 安らぎ」のトークン。
+   --color-* から bg-cream / text-ink のようなユーティリティが自動生成される。
+   v4 では tailwind.config.js を作らず、設定はすべてここに集約する。 */
+@theme {
+  --color-cream: #fef6ee;      /* 背景 */
+  --color-cream-top: #fff2e4;  /* 背景グラデーションの上端 */
+  --color-accent: #f0895b;     /* 主アクセント: 衝動ボタン・主要アクション・ストリーク */
+  --color-calm: #7fb5a6;       /* 補助アクセント: 代替行動系 */
+  --color-ink: #43352b;        /* 本文。真っ黒を避けて柔らかさを出す */
+  --color-ink-sub: #a58a76;    /* サブ・補足 */
+
+  --radius-btn: 16px;
+  --radius-card: 20px;
+
+  /* カードは白面をオレンジ味の淡い影でふわっと浮かせる */
+  --shadow-soft: 0 8px 24px -8px rgb(240 137 91 / 0.25);
+
+  --font-sans: ui-rounded, "Hiragino Maru Gothic ProN", "Zen Maru Gothic", "Noto Sans JP", system-ui, sans-serif;
+}
+
+/* 背景のグラデーションは全画面共通なので body に直接置く。
+   ユーティリティで毎回書くと指定漏れが起きるため。 */
+@layer base {
+  body {
+    background: linear-gradient(to bottom, var(--color-cream-top), var(--color-cream));
+    background-attachment: fixed;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+}

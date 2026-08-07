@@ -33,7 +33,10 @@ module App
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
-    # config.time_zone = "Central Time (US & Canada)"
+    # 棒グラフもストリークも urges.created_at の「日付」で集計する。
+    # UTC のままだと朝の記録が前日扱いになり、集計が静かに1日ずれる。
+    config.time_zone = "Tokyo"
+
     # config.eager_load_paths << Rails.root.join("extras")
 
     # Don't generate system test files.
