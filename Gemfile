@@ -54,6 +54,11 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # テストは RSpec。システムスペック(capybara/selenium)はバッファ日に追加する方針。
+  # 詳細は docs/dev_schedule.md「テスト方針」を参照。
+  gem "rspec-rails"
+  gem "factory_bot_rails"
 end
 
 group :development do

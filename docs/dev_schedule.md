@@ -250,6 +250,8 @@ Devise は `database_authenticatable, registerable, rememberable, validatable` �
 | 5 | **Stimulus は手動登録制**。`app/javascript/controllers/index.js` に import + register を書かないと「エラーも出ず何も起きない」 | 都度 |
 | 6 | Rails 8.1 で enum のキーワード記法は削除済み。位置引数形式のみ | 都度 |
 | 7 | タイムゾーン未設定。UTC のままだと朝の記録が前日扱いになり、棒グラフとストリークが静かにずれる | Day 1 |
+| 8 | **Puma がコンテナ内 localhost にしかバインドしない**。Rails 7.1 以降 development の既定が `127.0.0.1` になったため、`3200:3000` のポート公開が届かず localhost:3200 が開けない。→ `Procfile.dev` に `-b 0.0.0.0` | Day 1 済 |
+| 9 | **開発DBが未作成**。`db:create` が一度も走っておらず全リクエストが500になる。→ `db:prepare` | Day 1 済 |
 
 ※ `yarn.lock` の linux-x64 エントリは確認済み(21件)。Render とのプラットフォーム差の問題は起きない。
 
