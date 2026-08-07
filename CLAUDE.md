@@ -68,8 +68,10 @@
 - 日本語のUI文言は、デザイン方針(docs/design_guideline.md)のトーンに従う(優しく・責めない・絵文字なし)。
 
 ### テスト
-- システムスペック(RSpec + Capybara + Selenium)を書く方針。
-- テスト用DBは `TEST_DATABASE_URL` で開発DBと分離済み(同じDBを使わせない)。
+- 本線に入れるのは **rspec-rails + factory_bot_rails のみ**。model spec を機能ごとに数本書く。
+- システムスペック(Capybara + Selenium)は**バッファ日(08/13以降)の目標**。6日間の本線には入れない。理由は `docs/dev_schedule.md` の「テスト方針」を参照。
+- テスト用DBの分離は **`config/database.yml` の test セクションで `TEST_DATABASE_URL` を参照させて初めて成立する**(Rails に `TEST_DATABASE_URL` という規約はない)。分離できているかは推測せず、必ず実測で確認する:
+  `docker compose exec web bin/rails runner -e test 'puts ActiveRecord::Base.connection_db_config.database'`
 
 ---
 
@@ -97,10 +99,15 @@
 
 ## 7. 開発の進め方(docs/dev_schedule.md の要点)
 
-- バッファは薄い(実働30〜40時間想定)。**時間を溶かしやすいものは後回し**にする。
-- 特に「衝動ボタンの呼吸アニメーション」は最後(第4週)に作り込む。先に地味でも動くアプリを完成させる。
+- **提出 2026/08/17。完成目標 08/12。08/13〜08/16 はバッファ。**日次計画は `docs/dev_schedule.md` を参照(2026/08/07 に旧4週間計画から全面改訂済み。**「第1週」等の週単位の記述は無効**)。
+- バッファは薄い。**時間を溶かしやすいものは後回し**にする。
+- 「衝動ボタンの呼吸アニメーション」は Day 6 に作り込む(180分タイムボックス)。先に地味でも動くアプリを完成させる。
+- **Turbo Frames は Day 6 までは一切入れない。**通常のページ遷移で機能は成立する。
 - 「動かないカッコいいもの」より「動く地味なもの」を優先。
 - 迷ったら、機能を増やす方向ではなく、確実に動かす方向に倒す。
+- 死守する4機能: **認証 / 代替行動CRUD / 衝動記録 / 棒グラフ**。削る順序は `docs/dev_schedule.md` のリカバリー方針に従う。
+- **Day 1〜6 は日付ではなく順序**。意味のある関門は1つだけ:「死守4機能 + ストリークが本番で動く = 発表できる状態」。
+- **前倒しできた時に上積み(Turbo Frames・アニメーション作り込み)を提案しない。**上の関門に到達するまで、余った時間は次のコア機能に使う。切ったものは「溶けやすいから切った」もの。
 
 ---
 
@@ -120,3 +127,37 @@
 ### マージ
 - 機能が動作確認済みになったら、私に「マージしていいか」を確認してから作業を進める
 - 自動でmainにマージしない
+- **マージ = 本番デプロイ**(Render が main への push で自動デプロイする)。`git merge` と `git push` は開発者本人が実行する。
+
+---
+
+## 9. 実装時の技術的な必須ルール(毎回ここを間違える)
+
+### コマンド実行
+- ホストに Ruby / Rails / node_modules の実行環境はない。**すべて `docker compose exec web ...` 経由**。裸の `bin/rails` `rspec` `yarn` を実行しない。
+- **1回の Bash 呼び出しでコマンドを `&&` で連結しない**。許可リストは連結された各セグメントを個別に照合するため、許可済みコマンドでも毎回確認ダイアログが出る。
+- **`yarn add` は必ずコンテナ内で実行する**。node_modules は bind mount されており、ネイティブバイナリ(`@tailwindcss/oxide`, `esbuild`)は **linux-arm64 用**が入っている。ホスト(macOS)で `yarn add` すると darwin 用に入れ替わり、コンテナのビルドが壊れる。
+
+### Tailwind
+- **v4**(cssbundling-rails + `@tailwindcss/cli`)。**`tailwind.config.js` を作らない**(v4では不要かつ混乱の元)。
+- 設定もデザイントークンも `app/assets/stylesheets/application.tailwind.css` に書く。`@source` でスキャン対象を明示し、`@theme` でトークンを定義する。呼吸アニメーションの `@keyframes` も同ファイル末尾に置く(§4「どこに書くかは実装時に統一する」への回答)。
+- v4 でリネームされたクラスを v3 の名前で書かない:
+  `shadow` → `shadow-sm` / `shadow-sm` → `shadow-xs` / `rounded-sm` → `rounded-xs` / `outline-none` → `outline-hidden` / `flex-shrink-0` → `shrink-0` / `bg-opacity-50` → `bg-black/50`
+
+### Rails 8.1
+- enum は**位置引数形式のみ**。キーワード形式(`enum resolved: {...}`)は Rails 8 で削除済み。
+  正: `enum :resolved, { pending: 0, calmed: 1, took_action: 2, viewed: 3 }, default: :pending`
+- enum のデフォルトは**モデルの `default:` だけに頼らず、マイグレーションにも `default: 0, null: false` を書く**(seed や `insert_all` を通った時に pending にならない事故を防ぐ)。
+- `config.time_zone = "Tokyo"` が前提。**日付の集計・比較は必ず `in_time_zone` を通す**。UTC のまま `to_date` すると朝の記録が前日扱いになり、棒グラフとストリークが静かに壊れる。
+- 日別集計は SQL の `GROUP BY DATE(...)` ではなく **Ruby 側で `in_time_zone.to_date` してグルーピングする**(タイムゾーン指定を間違えても動いてしまうため)。
+- 本番では solid_cache / solid_queue / solid_cable を使わない(DB は Neon 1本)。
+
+### カラム名 `trigger` について
+`urges.trigger` はこのままでよい。PostgreSQL では `TRIGGER` は非予約語でカラム名に使え、ActiveRecord は識別子を常にクォートする。`ActiveRecord::Base` に `trigger` は定義されていないので `DangerousAttributeError` にもならない。**親切心でリネームを提案しない。**
+
+### Hotwire
+- **Stimulus コントローラを追加したら `app/javascript/controllers/index.js` に手動で import + register する**(または `bin/rails stimulus:manifest:update`)。このリポジトリは自動 eager load していない。忘れると「エラーも出ず、何も起きない」状態になる。
+- Chart.js を Stimulus で使う場合、`disconnect()` で `chart.destroy()` を必ず呼ぶ。Turbo Drive のキャッシュ復元で canvas が再利用され "Canvas is already in use" になる。
+- データの受け渡しは Stimulus values を使う。ERB 内に `<script>` で JSON を埋めると CSP に引っかかる。
+- DELETE リンクは `data: { turbo_method: :delete }`。`method: :delete`(Rails 6記法)は Turbo 下で GET になり動かない。
+- Turbo Streams は使わない。Turbo Frames は代替行動まわりのみ、かつバッファ日に回す。

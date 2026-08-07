@@ -38,3 +38,6 @@
 !/app/assets/builds/.keep
 
 /node_modules
+
+# Claude Code のローカル上書き設定(共有しない)
+/.claude/settings.local.json
