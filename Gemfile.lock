@@ -110,8 +110,6 @@ GEM
     ed25519 (1.4.0)
     erb (6.0.6)
     erubi (1.13.1)
-    et-orbi (1.4.0)
-      tzinfo
     factory_bot (6.6.0)
       activesupport (>= 6.1.0)
     factory_bot_rails (6.5.1)
@@ -119,9 +117,6 @@ GEM
       railties (>= 6.1.0)
     ffi (1.17.4-aarch64-linux-gnu)
     ffi (1.17.4-x86_64-linux-gnu)
-    fugit (1.13.0)
-      et-orbi (~> 1.4)
-      raabro (~> 1.4)
     globalid (1.4.0)
       activesupport (>= 6.1)
     i18n (1.15.2)
@@ -209,7 +204,6 @@ GEM
       rack
     puma (8.0.2)
       nio4r (~> 2.0)
-    raabro (1.5.0)
     racc (1.8.1)
     rack (3.2.6)
     rack-session (2.1.2)
@@ -316,22 +310,6 @@ GEM
       ffi (~> 1.12)
       logger
     securerandom (0.4.1)
-    solid_cable (4.0.2)
-      actioncable (>= 7.2)
-      activejob (>= 7.2)
-      activerecord (>= 7.2)
-      railties (>= 7.2)
-    solid_cache (1.0.10)
-      activejob (>= 7.2)
-      activerecord (>= 7.2)
-      railties (>= 7.2)
-    solid_queue (1.5.0)
-      activejob (>= 7.1)
-      activerecord (>= 7.1)
-      concurrent-ruby (>= 1.3.1)
-      fugit (~> 1.11)
-      railties (>= 7.1)
-      thor (>= 1.3.1)
     sshkit (1.25.1)
       base64
       logger
@@ -390,9 +368,6 @@ DEPENDENCIES
   rails (~> 8.1.3)
   rspec-rails
   rubocop-rails-omakase
-  solid_cable
-  solid_cache
-  solid_queue
   stimulus-rails
   thruster
   turbo-rails
