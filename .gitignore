@@ -41,3 +41,6 @@
 
 # Claude Code のローカル上書き設定(共有しない)
 /.claude/settings.local.json
+
+# PR文面の下書き。GitHubに貼るためのものなのでリポジトリには残さない
+/.pr/
