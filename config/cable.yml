@@ -8,10 +8,6 @@ development:
 test:
   adapter: test
 
+# ActionCable は使わないが、production の adapter が未定義だと起動時に落ちるので async を置く。
 production:
-  adapter: solid_cable
-  connects_to:
-    database:
-      writing: cable
-  polling_interval: 0.1.seconds
-  message_retention: 1.day
+  adapter: async
