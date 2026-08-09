@@ -3,7 +3,7 @@ class AlternativeActionsController < ApplicationController
   before_action :set_alternative_action, only: %i[ edit update destroy ]
 
   def index
-    @alternative_actions = current_user.all.order(:time_span, :created_at)
+    @alternative_actions = current_user.alternative_actions.all.order(:time_span, :created_at)
   end
 
   def new
