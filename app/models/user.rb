@@ -1,5 +1,4 @@
 class User < ApplicationRecord
-
   MOTHER_ACTIONS = [
 
     { title: "手をぎゅっと握って開く", time_span: :immediate },
