@@ -3,13 +3,13 @@
 
   <%= link_to "＋作成", new_alternative_action_path %>
 
-  <% # 即できる行動一覧 %>
+  <%# 即できる行動一覧 %>
   <%= render "time_span_section", title: "即", actions: @alternative_actions.immediate %>
 
-  <% # 5分ほどでできる行動一覧 %>
+  <%# 5分ほどでできる行動一覧 %>
   <%= render "time_span_section", title: "5分ほど", actions: @alternative_actions.short %>
 
-  <% # 準備がいる行動一覧 %>
+  <%# 準備がいる行動一覧 %>
   <%= render "time_span_section", title: "長め", actions: @alternative_actions.preparation %>
 
 </div>
