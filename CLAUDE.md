@@ -70,8 +70,14 @@
 ### テスト
 - 本線に入れるのは **rspec-rails + factory_bot_rails のみ**。model spec を機能ごとに数本書く。
 - システムスペック(Capybara + Selenium)は**バッファ日(08/13以降)の目標**。6日間の本線には入れない。理由は `docs/dev_schedule.md` の「テスト方針」を参照。
-- テスト用DBの分離は **`config/database.yml` の test セクションで `TEST_DATABASE_URL` を参照させて初めて成立する**(Rails に `TEST_DATABASE_URL` という規約はない)。分離できているかは推測せず、必ず実測で確認する:
-  `docker compose exec web bin/rails runner -e test 'puts ActiveRecord::Base.connection_db_config.database'`
+- テスト用DBの分離は、**次の2つが両方成立して初めて成り立つ**。片方だけでは守れない。
+  1. `config/database.yml` の test セクションが `TEST_DATABASE_URL` を参照している(Rails に `TEST_DATABASE_URL` という規約はない)
+  2. **rspec が実際に test 環境で走っている**
+- **2 は実際に破れていた(2026/08/10 判明)。**コンテナが `RAILS_ENV=development` を設定しており、`spec/rails_helper.rb` の `ENV['RAILS_ENV'] ||= 'test'` が上書きされず、全 spec が開発DBに対して走っていた。
+  現在は `rails_helper.rb` で `ENV['RAILS_ENV'] = 'test'` を強制し、test 以外なら `abort` する。
+- **旧来の確認コマンド `bin/rails runner -e test ...` は使わない。**`-e test` を明示している以上、必ず test を指すので、上の 2 が破れていても検出できない。**検証コマンドが検証したいものを検証していない**典型例だった。
+- 分離は `spec/test_environment_spec.rb` が毎回の実行で検証する。確認は **rspec を通す**こと:
+  `docker compose exec web bundle exec rspec`
 
 ---
 
