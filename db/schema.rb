@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_09_072541) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_10_130508) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,6 +21,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_09_072541) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_alternative_actions_on_user_id"
+  end
+
+  create_table "urges", force: :cascade do |t|
+    t.bigint "alternative_action_id"
+    t.datetime "created_at", null: false
+    t.text "memo"
+    t.integer "resolved", default: 0, null: false
+    t.integer "trigger"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["alternative_action_id"], name: "index_urges_on_alternative_action_id"
+    t.index ["user_id"], name: "index_urges_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -34,4 +46,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_09_072541) do
   end
 
   add_foreign_key "alternative_actions", "users"
+  add_foreign_key "urges", "alternative_actions", on_delete: :nullify
+  add_foreign_key "urges", "users"
 end
