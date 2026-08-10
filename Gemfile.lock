@@ -119,6 +119,7 @@ GEM
       factory_bot (~> 6.5)
       railties (>= 6.1.0)
     ffi (1.17.4-aarch64-linux-gnu)
+    ffi (1.17.4-arm64-darwin)
     ffi (1.17.4-x86_64-linux-gnu)
     globalid (1.4.0)
       activesupport (>= 6.1)
@@ -187,6 +188,8 @@ GEM
     nio4r (2.7.5)
     nokogiri (1.19.4-aarch64-linux-gnu)
       racc (~> 1.4)
+    nokogiri (1.19.4-arm64-darwin)
+      racc (~> 1.4)
     nokogiri (1.19.4-x86_64-linux-gnu)
       racc (~> 1.4)
     orm_adapter (0.5.0)
@@ -196,6 +199,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.6.3-aarch64-linux)
+    pg (1.6.3-arm64-darwin)
     pg (1.6.3-x86_64-linux)
     pp (0.6.4)
       prettyprint
@@ -327,6 +331,7 @@ GEM
       railties (>= 6.0.0)
     thor (1.5.0)
     thruster (0.1.23-aarch64-linux)
+    thruster (0.1.23-arm64-darwin)
     thruster (0.1.23-x86_64-linux)
     timeout (0.6.1)
     tsort (0.2.0)
@@ -354,6 +359,7 @@ GEM
 
 PLATFORMS
   aarch64-linux
+  arm64-darwin-25
   x86_64-linux
 
 DEPENDENCIES
