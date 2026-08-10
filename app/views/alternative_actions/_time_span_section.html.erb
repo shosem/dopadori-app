@@ -1,0 +1,19 @@
+<%# locals: (title:, actions:) %>
+
+<div>
+  <h2><%= title %></h2>
+
+  <% if actions.present? %>
+    <div class="flex flex-col gap-2">
+      <% actions.each do |act| %>
+        <div class="flex items-center gap-2">
+          <p><%= act.title %></p>
+          <%= link_to "編集", edit_alternative_action_path(act) %>
+          <%= link_to "削除", alternative_action_path(act), data: { turbo_method: :delete, turbo_confirm: "削除しますか？" } %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p>代替行動がありません</p>
+  <% end %>
+</div>

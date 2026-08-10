@@ -1,9 +1,11 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
-ENV['RAILS_ENV'] ||= 'test'
+# コンテナが RAILS_ENV=development を設定しているため、`||=` では上書きされず
+# テストが開発DBに対して走ってしまう。ここは常に test を強制する。
+ENV['RAILS_ENV'] = 'test'
 require_relative '../config/environment'
-# Prevent database truncation if the environment is production
-abort("The Rails environment is running in production mode!") if Rails.env.production?
+# 上の強制が何かの拍子に効かなくなった時に、開発DBを触る前に止める。
+abort("テストが #{Rails.env} 環境で動いています。開発DBを壊すため中断します。") unless Rails.env.test?
 # Uncomment the line below in case you have `--require rails_helper` in the `.rspec` file
 # that will avoid rails generators crashing because migrations haven't been run yet
 # return unless Rails.env.test?
@@ -37,6 +39,9 @@ end
 RSpec.configure do |config|
   # FactoryBot.create(...) ではなく create(...) と書けるようにする
   config.include FactoryBot::Syntax::Methods
+
+  # リクエストスペックで sign_in / sign_out を使えるようにする
+  config.include Devise::Test::IntegrationHelpers, type: :request
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
