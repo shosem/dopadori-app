@@ -1,0 +1,17 @@
+<%# locals: (alternative_action:) %>
+
+<%= form_with model: alternative_action do |f| %>
+  <%= render 'shared/error_messages', resource: alternative_action %>
+
+  <div>
+    <%= f.label :title %>
+    <%= f.text_field :title %>
+  </div>
+
+  <div>
+    <%= f.label :time_span %>
+    <%= f.select :time_span, [["即", :immediate], ["5分ほど", :short], ["長め", :preparation]] %>
+  </div>
+
+  <%= f.submit %>
+<% end %>
