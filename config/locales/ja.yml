@@ -1,0 +1,12 @@
+ja:
+  activerecord:
+    attributes:
+      alternative_action:
+        title: "タイトル"
+        time_span: "所要時間"
+      user:
+        name: 名前
+  helpers:
+    submit:
+      create: "作成"
+      update: "保存"
