@@ -10,7 +10,7 @@
 
   <div>
     <%= f.label :time_span %>
-    <%= f.select :time_span, [["即", :immediate], ["5分ほど", :short], ["長め", :preparation]] %>
+    <%= f.select :time_span, AlternativeAction.time_span_options %>
   </div>
 
   <%= f.submit %>
