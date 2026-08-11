@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dopadori - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        body {
+            background-color: #f6faff;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-tertiary": "#ffffff",
+                "surface-variant": "#dae4ee",
+                "outline": "#71787f",
+                "on-tertiary-fixed": "#410004",
+                "surface-container-low": "#ebf5ff",
+                "error-container": "#ffdad6",
+                "on-secondary": "#ffffff",
+                "surface-dim": "#d1dbe5",
+                "on-surface-variant": "#41474e",
+                "on-secondary-container": "#526575",
+                "tertiary-fixed-dim": "#ffb3ae",
+                "on-secondary-fixed": "#091d2b",
+                "secondary": "#4d6170",
+                "surface-container-lowest": "#ffffff",
+                "primary": "#2b6085",
+                "inverse-primary": "#9accf6",
+                "primary-fixed": "#cbe6ff",
+                "on-primary-fixed-variant": "#0c4b6f",
+                "secondary-fixed": "#d1e5f8",
+                "surface-container": "#e5eff9",
+                "surface-container-high": "#dfe9f3",
+                "surface-bright": "#f6faff",
+                "tertiary": "#b71422",
+                "surface-container-highest": "#dae4ee",
+                "on-secondary-fixed-variant": "#364958",
+                "secondary-fixed-dim": "#b5c9db",
+                "tertiary-fixed": "#ffdad7",
+                "inverse-on-surface": "#e8f2fc",
+                "error": "#ba1a1a",
+                "on-surface": "#131d24",
+                "on-primary": "#ffffff",
+                "primary-container": "#47799f",
+                "on-background": "#131d24",
+                "inverse-surface": "#283239",
+                "surface-tint": "#2e6388",
+                "on-tertiary-fixed-variant": "#930014",
+                "on-error-container": "#93000a",
+                "tertiary-container": "#db3237",
+                "outline-variant": "#c1c7cf",
+                "on-tertiary-container": "#fffbff",
+                "on-primary-container": "#fcfcff",
+                "on-error": "#ffffff",
+                "surface": "#f6faff",
+                "primary-fixed-dim": "#9accf6",
+                "background": "#f6faff",
+                "on-primary-fixed": "#001e30",
+                "secondary-container": "#cee2f5"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "lg": "48px",
+                "margin-mobile": "24px",
+                "xs": "4px",
+                "md": "24px",
+                "base": "8px",
+                "margin-desktop": "64px",
+                "sm": "12px",
+                "xl": "80px",
+                "gutter": "20px"
+        },
+        "fontFamily": {
+                "body-lg": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "label-sm": [
+                        "Inter"
+                ],
+                "label-md": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Inter"
+                ],
+                "body-md": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "20px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+</head>
+<body class="text-on-background bg-background relative overflow-x-hidden h-screen flex flex-col">
+<!-- Header -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10">
+<div class="flex items-center justify-between px-margin-mobile h-16 w-full max-w-7xl mx-auto">
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight">Dopadori</h1>
+<button class="text-on-secondary-container hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-300">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="w-full max-w-md mx-auto px-margin-mobile flex-1 flex flex-col justify-center items-center gap-10 py-24 pb-32">
+<!-- Main Card -->
+<section class="bg-surface-container-lowest rounded-3xl w-full p-10 flex flex-col items-center shadow-sm border border-outline-variant/20">
+<!-- Greeting -->
+<h2 class="text-secondary font-label-md tracking-[0.2em] mb-8">おかえりなさい</h2>
+<!-- Streak -->
+<div class="text-[80px] leading-none text-primary font-semibold mb-4 tracking-tighter">7</div>
+<p class="text-primary font-label-md mb-12 tracking-wide">日連続、向き合っています</p>
+<!-- Chart -->
+<div class="w-full">
+<div class="flex items-end justify-between h-24 gap-3">
+<div class="flex flex-col items-center w-full gap-3 h-full justify-end group">
+<div class="w-full max-w-[16px] bg-primary rounded-full h-[40%]"></div>
+</div>
+<div class="flex flex-col items-center w-full gap-3 h-full justify-end group">
+<div class="w-full max-w-[16px] bg-primary rounded-full h-[60%]"></div>
+</div>
+<div class="flex flex-col items-center w-full gap-3 h-full justify-end group">
+<div class="w-full max-w-[16px] bg-primary rounded-full h-[30%]"></div>
+</div>
+<div class="flex flex-col items-center w-full gap-3 h-full justify-end group">
+<div class="w-full max-w-[16px] bg-primary rounded-full h-[70%]"></div>
+</div>
+<div class="flex flex-col items-center w-full gap-3 h-full justify-end group">
+<div class="w-full max-w-[16px] bg-primary rounded-full h-[20%]"></div>
+</div>
+<div class="flex flex-col items-center w-full gap-3 h-full justify-end group">
+<div class="w-full max-w-[16px] bg-primary rounded-full h-[10%]"></div>
+</div>
+<div class="flex flex-col items-center w-full gap-3 h-full justify-end group">
+<div class="w-full max-w-[16px] bg-secondary-fixed-dim rounded-full h-[15%]"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Primary Action Area -->
+<section class="flex flex-col items-center justify-center w-full gap-4">
+<button class="w-full max-w-[240px] h-16 rounded-full bg-primary text-on-primary font-label-md tracking-wide hover:scale-105 active:scale-95 transition-transform duration-300 shadow-md">
+        衝動がきた
+    </button>
+<a class="text-secondary font-label-sm hover:text-primary transition-colors underline-offset-4" href="#">あとから記録する</a>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-margin-mobile py-2 pb-safe bg-surface/80 backdrop-blur-xl border-t border-outline-variant/10 rounded-t-xl">
+<a class="flex flex-col items-center justify-center bg-secondary-container/50 text-primary rounded-full px-4 py-1 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined text-2xl mb-1">home</span>
+<span class="font-label-sm text-label-sm">ホーム</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-container/60 hover:bg-secondary-container/20 transition-colors rounded-full px-4 py-1 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined text-2xl mb-1">water_drop</span>
+<span class="font-label-sm text-label-sm">記録</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-container/60 hover:bg-secondary-container/20 transition-colors rounded-full px-4 py-1 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined text-2xl mb-1">list_alt</span>
+<span class="font-label-sm text-label-sm">代替行動</span>
+</a>
+</nav>
+</body></html>

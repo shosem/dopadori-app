@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ログイン - Dopadori</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#47799f",
+                        "surface-bright": "#f6faff",
+                        "primary-fixed": "#cbe6ff",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#fcfcff",
+                        "surface-container": "#e5eff9",
+                        "on-secondary-fixed-variant": "#364958",
+                        "surface": "#f6faff",
+                        "surface-container-high": "#dfe9f3",
+                        "inverse-primary": "#9accf6",
+                        "on-surface-variant": "#41474e",
+                        "inverse-on-surface": "#e8f2fc",
+                        "background": "#f6faff",
+                        "on-surface": "#131d24",
+                        "tertiary-container": "#db3237",
+                        "tertiary-fixed": "#ffdad7",
+                        "primary": "#2b6085",
+                        "tertiary-fixed-dim": "#ffb3ae",
+                        "surface-variant": "#dae4ee",
+                        "on-background": "#131d24",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#fffbff",
+                        "on-tertiary-fixed-variant": "#930014",
+                        "surface-container-highest": "#dae4ee",
+                        "secondary": "#4d6170",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#0c4b6f",
+                        "on-secondary-container": "#526575",
+                        "primary-fixed-dim": "#9accf6",
+                        "surface-container-low": "#ebf5ff",
+                        "secondary-fixed": "#d1e5f8",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#d1dbe5",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#2e6388",
+                        "tertiary": "#b71422",
+                        "secondary-fixed-dim": "#b5c9db",
+                        "secondary-container": "#cee2f5",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#001e30",
+                        "outline": "#71787f",
+                        "inverse-surface": "#283239",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#091d2b",
+                        "on-tertiary-fixed": "#410004",
+                        "outline-variant": "#c1c7cf"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "24px",
+                        "lg": "48px",
+                        "sm": "12px",
+                        "margin-desktop": "64px",
+                        "xl": "80px",
+                        "gutter": "20px",
+                        "xs": "4px",
+                        "md": "24px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-md": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: var(--tw-colors-background);
+        }
+        .glass-panel {
+            background: rgba(246, 250, 255, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center px-margin-mobile md:px-margin-desktop pt-24 pb-24 text-on-background font-body-md bg-background">
+<!-- Header -->
+<header class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10">
+<div class="flex items-center justify-between px-margin-mobile h-16 w-full max-w-7xl mx-auto">
+<div class="font-headline-md text-headline-md text-primary tracking-tight">
+            Dopadori
+        </div>
+</div>
+</header>
+<main class="w-full max-w-md mx-auto">
+<!-- Header / Logo Area inside Content -->
+<div class="text-center mb-lg">
+<div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-container/20 text-primary mb-md">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">self_care</span>
+</div>
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-primary tracking-tight mb-xs">
+                おかえりなさい
+            </h1>
+<p class="text-body-md font-body-md text-on-surface-variant">
+                今日も穏やかな一日になりますように
+            </p>
+</div>
+<!-- Login Form Container -->
+<div class="glass-panel rounded-xl p-md md:p-lg shadow-[0_32px_64px_-16px_rgba(43,96,133,0.1)]">
+<form action="#" class="space-y-md" method="POST">
+<!-- Email Field -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-xs" for="email">
+                        メールアドレス
+                    </label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant/60 text-xl">mail</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-3 rounded-lg border border-outline-variant bg-surface/50 text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300" id="email" name="email" placeholder="your@email.com" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div>
+<div class="flex justify-between items-center mb-xs">
+<label class="block text-label-md font-label-md text-on-surface" for="password">
+                            パスワード
+                        </label>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant/60 text-xl">lock</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-3 rounded-lg border border-outline-variant bg-surface/50 text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+<!-- Submit Button -->
+<div class="pt-sm">
+<button class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-label-md font-label-md text-on-primary bg-primary hover:bg-primary-container focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-300 active:scale-[0.98]" type="submit">
+                        ログイン
+                    </button>
+</div>
+</form>
+</div>
+<!-- Footer Link -->
+<div class="mt-lg text-center">
+<p class="text-body-md font-body-md text-on-surface-variant">
+                アカウントをお持ちでないですか？
+                <a class="font-medium text-primary hover:text-primary-container transition-colors ml-1" href="#">
+                    はじめての方はこちら
+                </a>
+</p>
+</div>
+</main>
+</body></html>

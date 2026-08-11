@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="ja"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>振り返り記録</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-tertiary": "#ffffff",
+                "surface-variant": "#dae4ee",
+                "outline": "#71787f",
+                "on-tertiary-fixed": "#410004",
+                "surface-container-low": "#ebf5ff",
+                "error-container": "#ffdad6",
+                "on-secondary": "#ffffff",
+                "surface-dim": "#d1dbe5",
+                "on-surface-variant": "#41474e",
+                "on-secondary-container": "#526575",
+                "tertiary-fixed-dim": "#ffb3ae",
+                "on-secondary-fixed": "#091d2b",
+                "secondary": "#4d6170",
+                "surface-container-lowest": "#ffffff",
+                "primary": "#2b6085",
+                "inverse-primary": "#9accf6",
+                "primary-fixed": "#cbe6ff",
+                "on-primary-fixed-variant": "#0c4b6f",
+                "secondary-fixed": "#d1e5f8",
+                "surface-container": "#e5eff9",
+                "surface-container-high": "#dfe9f3",
+                "surface-bright": "#f6faff",
+                "tertiary": "#b71422",
+                "surface-container-highest": "#dae4ee",
+                "on-secondary-fixed-variant": "#364958",
+                "secondary-fixed-dim": "#b5c9db",
+                "tertiary-fixed": "#ffdad7",
+                "inverse-on-surface": "#e8f2fc",
+                "error": "#ba1a1a",
+                "on-surface": "#131d24",
+                "on-primary": "#ffffff",
+                "primary-container": "#47799f",
+                "on-background": "#131d24",
+                "inverse-surface": "#283239",
+                "surface-tint": "#2e6388",
+                "on-tertiary-fixed-variant": "#930014",
+                "on-error-container": "#93000a",
+                "tertiary-container": "#db3237",
+                "outline-variant": "#c1c7cf",
+                "on-tertiary-container": "#fffbff",
+                "on-primary-container": "#fcfcff",
+                "on-error": "#ffffff",
+                "surface": "#f6faff",
+                "primary-fixed-dim": "#9accf6",
+                "background": "#f6faff",
+                "on-primary-fixed": "#001e30",
+                "secondary-container": "#cee2f5"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "lg": "48px",
+                "margin-mobile": "24px",
+                "xs": "4px",
+                "md": "24px",
+                "base": "8px",
+                "margin-desktop": "64px",
+                "sm": "12px",
+                "xl": "80px",
+                "gutter": "20px"
+        },
+        "fontFamily": {
+                "body-lg": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "label-sm": [
+                        "Inter"
+                ],
+                "label-md": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Inter"
+                ],
+                "body-md": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "20px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Ambient Pulse Animation */
+        @keyframes gentlePulse {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(0.95); opacity: 0.5; }
+        }
+        .animate-pulse-slow {
+            animation: gentlePulse 4s infinite ease-in-out;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md overflow-x-hidden relative">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full bg-background/80 dark:bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant/10 z-50">
+<div class="flex items-center justify-between px-margin-mobile h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-sm">
+<span class="font-headline-md text-headline-md text-primary dark:text-primary-fixed tracking-tight font-bold">Dopadori</span>
+</div>
+
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant transition-colors text-on-surface">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center px-margin-mobile md:px-margin-desktop relative z-10 w-full max-w-2xl mx-auto py-xl pt-24 pb-24"><div class="w-full space-y-lg">
+<!-- Trigger Section -->
+<div class="space-y-sm">
+<label class="text-label-md font-label-md text-on-surface-variant">トリガー(任意)</label>
+<div class="flex items-center gap-sm">
+<button class="px-md py-sm rounded-full border border-primary text-primary font-medium hover:bg-primary-fixed/30 transition-colors">暇なとき</button>
+<button class="px-md py-sm rounded-full border border-primary text-primary font-medium hover:bg-primary-fixed/30 transition-colors">作業中</button>
+<span class="text-label-sm text-outline ml-auto">スキップ可</span>
+</div>
+</div>
+<!-- Memo Section -->
+<div class="space-y-sm">
+<label class="text-label-md font-label-md text-on-surface-variant">メモ(任意)</label>
+<textarea class="w-full h-32 p-md rounded-xl bg-surface-container-low/40 border border-outline-variant/30 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none text-body-md" placeholder="どんなきっかけだったかな？"></textarea>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-md pt-lg">
+<button class="w-full py-md rounded-xl bg-primary text-on-primary font-headline-md shadow-lg active:scale-[0.98] transition-transform">落ち着いた</button>
+<button class="w-full py-md rounded-xl bg-secondary-container text-on-secondary-container font-headline-md active:scale-[0.98] transition-transform">代わりのことをする</button>
+</div>
+</div></main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-margin-mobile py-2 pb-safe bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-xl border-t border-outline-variant/10 rounded-t-xl md:hidden">
+<!-- ホーム -->
+<a class="flex flex-col items-center justify-center text-on-secondary-container/60 dark:text-on-secondary-fixed-variant/60 hover:bg-secondary-container/20 transition-colors px-4 py-1 rounded-full group active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-label-sm text-label-sm">ホーム</span>
+</a>
+<!-- 記録 (Active) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container/50 dark:bg-secondary-container/30 text-primary dark:text-primary-fixed rounded-full px-4 py-1 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="font-label-sm text-label-sm font-semibold">記録</span>
+</a>
+<!-- 代替行動 -->
+<a class="flex flex-col items-center justify-center text-on-secondary-container/60 dark:text-on-secondary-fixed-variant/60 hover:bg-secondary-container/20 transition-colors px-4 py-1 rounded-full group active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1">list_alt</span>
+<span class="font-label-sm text-label-sm">代替行動</span>
+</a>
+</nav>
+
+
+</body></html>

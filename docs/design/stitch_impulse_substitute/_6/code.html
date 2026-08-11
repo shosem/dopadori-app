@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>代替行動の提案 - 平静</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-tertiary": "#ffffff",
+                "surface-variant": "#dae4ee",
+                "outline": "#71787f",
+                "on-tertiary-fixed": "#410004",
+                "surface-container-low": "#ebf5ff",
+                "error-container": "#ffdad6",
+                "on-secondary": "#ffffff",
+                "surface-dim": "#d1dbe5",
+                "on-surface-variant": "#41474e",
+                "on-secondary-container": "#526575",
+                "tertiary-fixed-dim": "#ffb3ae",
+                "on-secondary-fixed": "#091d2b",
+                "secondary": "#4d6170",
+                "surface-container-lowest": "#ffffff",
+                "primary": "#2b6085",
+                "inverse-primary": "#9accf6",
+                "primary-fixed": "#cbe6ff",
+                "on-primary-fixed-variant": "#0c4b6f",
+                "secondary-fixed": "#d1e5f8",
+                "surface-container": "#e5eff9",
+                "surface-container-high": "#dfe9f3",
+                "surface-bright": "#f6faff",
+                "tertiary": "#b71422",
+                "surface-container-highest": "#dae4ee",
+                "on-secondary-fixed-variant": "#364958",
+                "secondary-fixed-dim": "#b5c9db",
+                "tertiary-fixed": "#ffdad7",
+                "inverse-on-surface": "#e8f2fc",
+                "error": "#ba1a1a",
+                "on-surface": "#131d24",
+                "on-primary": "#ffffff",
+                "primary-container": "#47799f",
+                "on-background": "#131d24",
+                "inverse-surface": "#283239",
+                "surface-tint": "#2e6388",
+                "on-tertiary-fixed-variant": "#930014",
+                "on-error-container": "#93000a",
+                "tertiary-container": "#db3237",
+                "outline-variant": "#c1c7cf",
+                "on-tertiary-container": "#fffbff",
+                "on-primary-container": "#fcfcff",
+                "on-error": "#ffffff",
+                "surface": "#f6faff",
+                "primary-fixed-dim": "#9accf6",
+                "background": "#f6faff",
+                "on-primary-fixed": "#001e30",
+                "secondary-container": "#cee2f5"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "lg": "48px",
+                "margin-mobile": "24px",
+                "xs": "4px",
+                "md": "24px",
+                "base": "8px",
+                "margin-desktop": "64px",
+                "sm": "12px",
+                "xl": "80px",
+                "gutter": "20px"
+        },
+        "fontFamily": {
+                "body-lg": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "label-sm": [
+                        "Inter"
+                ],
+                "label-md": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Inter"
+                ],
+                "body-md": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "20px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.surface-variant');
+            border-radius: 4px;
+        }
+        /* Pulse Animation */
+        @keyframes subtle-pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 15px theme('colors.primary-fixed-dim'); }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        .pulse-indicator {
+            animation: subtle-pulse 3s infinite ease-in-out;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="antialiased bg-background min-h-screen flex flex-col relative overflow-x-hidden">
+<!-- TopAppBar (From JSON) -->
+<header class="bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant/10 text-primary sticky top-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 max-w-7xl mx-auto">
+<div class="flex items-center gap-xs">
+<span class="text-headline-md font-headline-md text-primary dark:text-primary-fixed tracking-tight font-bold">Dopadori</span>
+</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity active:scale-95 duration-300">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow max-w-3xl mx-auto w-full px-margin-mobile md:px-margin-desktop flex flex-col relative z-10 gap-md py-sm pb-24">
+<section class="text-center md:text-left flex flex-col gap-xs pt-4">
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-on-background">今の状況に合わせて<br/>行動を選びましょう</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-xl">最も取り組みやすいものをひとつ試してみてください。</p>
+</section>
+<!-- Suggestion Cards List -->
+<section class="flex flex-col gap-sm relative">
+<!-- Card 1: High Priority / Immediate -->
+<!-- 即(immediate): 主役。説明文は time_span ごとの固定文言で、行動ごとには持たない -->
+<p class="text-label-md font-label-md text-on-surface-variant">道具も準備もいらない、いまここでできること</p>
+<button class="w-full text-left bg-surface-bright/80 backdrop-blur-xl border border-primary/20 rounded-xl flex flex-col gap-sm shadow-[0_8px_32px_-8px_rgba(43,96,133,0.15)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_-12px_rgba(43,96,133,0.25)] relative overflow-hidden group py-sm px-md"><div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div><div class="flex justify-between items-center w-full"><div class="flex flex-col gap-xs"><div class="inline-flex items-center px-sm py-xs rounded-full bg-primary/10 text-primary text-label-sm font-label-sm w-fit">即</div><h3 class="text-headline-md font-headline-md text-on-background mt-xs">拍手を10回する</h3></div><div class="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shrink-0 pulse-indicator"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span></div></div></button>
+<!-- Card 2: Medium Priority / Time Available -->
+<p class="text-label-md font-label-md text-on-surface-variant pt-sm">少しだけ時間があるなら</p>
+<button class="w-full text-left bg-surface-container-low/60 backdrop-blur-md border border-outline-variant/30 rounded-xl flex flex-col gap-sm transition-all duration-300 hover:-translate-y-1 hover:bg-surface-container-low/80 group py-sm px-md"><div class="flex justify-between items-center w-full"><div class="flex flex-col gap-xs"><div class="inline-flex items-center px-sm py-xs rounded-full bg-secondary-container text-on-secondary-container text-label-sm font-label-sm w-fit">少し</div><h3 class="text-headline-md font-headline-md text-on-background mt-xs">5分だけ外を歩く</h3></div><div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0"><span class="material-symbols-outlined">schedule</span></div></div></button>
+<!-- Card 3: Low Priority / Preparation Needed -->
+<p class="text-label-md font-label-md text-on-surface-variant pt-sm">準備できる日に、覚えておきたいこと</p>
+<button class="w-full text-left bg-surface-container-low/40 backdrop-blur-sm border border-outline-variant/20 rounded-xl flex flex-col gap-sm transition-all duration-300 hover:-translate-y-1 hover:bg-surface-container-low/60 group opacity-90 py-sm px-md"><div class="flex justify-between items-center w-full"><div class="flex flex-col gap-xs"><div class="inline-flex items-center px-sm py-xs rounded-full bg-surface-variant text-on-surface-variant text-label-sm font-label-sm w-fit">準備</div><h3 class="text-headline-md font-headline-md text-on-background mt-xs">サウナに行く</h3></div><div class="w-12 h-12 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center shrink-0"><span class="material-symbols-outlined">event</span></div></div></button>
+<div class="flex justify-center pt-sm">
+<a class="inline-flex items-center gap-xs text-label-md font-label-md text-primary hover:text-primary-container transition-colors py-sm px-md rounded-full bg-primary/5 hover:bg-primary/10" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">refresh</span>
+                他の行動を選ぶ
+            </a>
+</div></section>
+<!-- Bottom Action Area -->
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-margin-mobile py-2 pb-safe bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-xl border-t border-outline-variant/10 rounded-t-xl md:hidden">
+<a class="flex flex-col items-center justify-center text-on-secondary-container/60 dark:text-on-secondary-fixed-variant/60 hover:bg-secondary-container/20 transition-colors active:scale-90 duration-200 p-2 rounded-xl group" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform">home</span>
+<span class="text-label-sm font-label-sm">ホーム</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container/50 dark:bg-secondary-container/30 text-primary dark:text-primary-fixed rounded-full px-4 py-1 hover:bg-secondary-container/20 transition-colors active:scale-90 duration-200 group" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="text-label-sm font-label-sm font-semibold">記録</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-container/60 dark:text-on-secondary-fixed-variant/60 hover:bg-secondary-container/20 transition-colors active:scale-90 duration-200 p-2 rounded-xl group" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform">list_alt</span>
+<span class="text-label-sm font-label-sm">代替行動</span>
+</a>
+</nav>
+</body></html>
