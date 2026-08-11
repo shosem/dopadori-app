@@ -34,8 +34,8 @@ class UrgesController < ApplicationController
 
   def suggestions
     grouped = current_user.alternative_actions.group_by(&:time_span)
-    grouped = grouped.transform_values { |actions| [actions.sample] } unless params[:all]
-    @suggestions = AlternativeAction.time_spans.keys.filter_map { |span| [span, grouped[span]] if grouped[span] }
+    grouped = grouped.transform_values { |actions| [ actions.sample ] } unless params[:all]
+    @suggestions = AlternativeAction.time_spans.keys.filter_map { |span| [ span, grouped[span] ] if grouped[span] }
   end
 
   private

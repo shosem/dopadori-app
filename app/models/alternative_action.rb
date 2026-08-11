@@ -14,6 +14,6 @@ class AlternativeAction < ApplicationRecord
   end
 
   def self.time_span_options
-    time_spans.keys.map { |key| [I18n.t("activerecord.attributes.alternative_action/time_span.#{key}"), key] }
+    time_spans.keys.map { |key| [ I18n.t("activerecord.attributes.alternative_action/time_span.#{key}"), key ] }
   end
 end
