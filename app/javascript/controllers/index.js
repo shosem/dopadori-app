@@ -6,3 +6,6 @@ import { application } from "./application"
 
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
+
+import UrgeButtonController from "./urge_button_controller"
+application.register("urge-button", UrgeButtonController)

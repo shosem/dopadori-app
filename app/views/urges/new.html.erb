@@ -1,1 +1,4 @@
-<%= button_to "衝動ボタン", urges_path %>
+<div data-controller="urge-button">
+  <%= form_with url: urges_path, method: :post %>
+  <button type="button">衝動ボタン</button>
+</div>
