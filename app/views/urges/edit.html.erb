@@ -1,0 +1,15 @@
+<%= form_with model: @urge do |f| %>
+
+  <div>
+    <%= f.label :trigger %>
+    <%= f.select :trigger, [["暇なとき", :idle], ["作業中", :working]], include_blank: "選ばない" %>
+  </div>
+
+ <div>
+    <%= f.label :memo %>
+    <%= f.text_area :memo %>
+  </div>
+
+  <%= f.button "落ち着いた", name: "next", value: "calmed" %>
+  <%= f.button "代わりのことをする", name: "next", value: "suggestions" %>
+<% end %>

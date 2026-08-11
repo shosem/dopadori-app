@@ -25,6 +25,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :rememberable, :registerable, :validatable
   validates :name, presence: true, length: { maximum: 10 }
   has_many :alternative_actions, dependent: :destroy
+  has_many :urges, dependent: :destroy
   after_create :distribute_mother_actions
 
   private

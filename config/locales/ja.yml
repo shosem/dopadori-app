@@ -4,6 +4,10 @@ ja:
       alternative_action:
         title: "タイトル"
         time_span: "所要時間"
+      alternative_action/time_span:
+        immediate: "即"
+        short: "5分くらい"
+        preparation: "準備が必要"
       user:
         name: 名前
   helpers:

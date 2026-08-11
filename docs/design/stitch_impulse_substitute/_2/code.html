@@ -1,0 +1,252 @@
+<!DOCTYPE html><html lang="ja"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>衝動ボタン・呼吸画面 - 平静</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-tertiary": "#ffffff",
+                "surface-variant": "#dae4ee",
+                "outline": "#71787f",
+                "on-tertiary-fixed": "#410004",
+                "surface-container-low": "#ebf5ff",
+                "error-container": "#ffdad6",
+                "on-secondary": "#ffffff",
+                "surface-dim": "#d1dbe5",
+                "on-surface-variant": "#41474e",
+                "on-secondary-container": "#526575",
+                "tertiary-fixed-dim": "#ffb3ae",
+                "on-secondary-fixed": "#091d2b",
+                "secondary": "#4d6170",
+                "surface-container-lowest": "#ffffff",
+                "primary": "#2b6085",
+                "inverse-primary": "#9accf6",
+                "primary-fixed": "#cbe6ff",
+                "on-primary-fixed-variant": "#0c4b6f",
+                "secondary-fixed": "#d1e5f8",
+                "surface-container": "#e5eff9",
+                "surface-container-high": "#dfe9f3",
+                "surface-bright": "#f6faff",
+                "tertiary": "#b71422",
+                "surface-container-highest": "#dae4ee",
+                "on-secondary-fixed-variant": "#364958",
+                "secondary-fixed-dim": "#b5c9db",
+                "tertiary-fixed": "#ffdad7",
+                "inverse-on-surface": "#e8f2fc",
+                "error": "#ba1a1a",
+                "on-surface": "#131d24",
+                "on-primary": "#ffffff",
+                "primary-container": "#47799f",
+                "on-background": "#131d24",
+                "inverse-surface": "#283239",
+                "surface-tint": "#2e6388",
+                "on-tertiary-fixed-variant": "#930014",
+                "on-error-container": "#93000a",
+                "tertiary-container": "#db3237",
+                "outline-variant": "#c1c7cf",
+                "on-tertiary-container": "#fffbff",
+                "on-primary-container": "#fcfcff",
+                "on-error": "#ffffff",
+                "surface": "#f6faff",
+                "primary-fixed-dim": "#9accf6",
+                "background": "#f6faff",
+                "on-primary-fixed": "#001e30",
+                "secondary-container": "#cee2f5"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "lg": "48px",
+                "margin-mobile": "24px",
+                "xs": "4px",
+                "md": "24px",
+                "base": "8px",
+                "margin-desktop": "64px",
+                "sm": "12px",
+                "xl": "80px",
+                "gutter": "20px"
+        },
+        "fontFamily": {
+                "body-lg": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "label-sm": [
+                        "Inter"
+                ],
+                "label-md": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Inter"
+                ],
+                "body-md": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "20px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        .pulse-animation {
+            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(43, 96, 133, 0.15);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 32px rgba(43, 96, 133, 0);
+            }
+        }
+
+        .glass-panel {
+            background: rgba(246, 250, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(113, 120, 127, 0.15);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col relative overflow-hidden">
+<!-- TopAppBar -->
+<header class="bg-background w-full z-10 flex justify-between items-center px-margin-mobile md:px-margin-desktop py-md max-w-7xl mx-auto">
+<div class="text-headline-md font-headline-md font-bold text-primary">Dopadori</div>
+
+<button class="text-on-surface-variant hover:opacity-80 transition-opacity flex items-center justify-center p-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop relative z-10 py-xl">
+<!-- Breathing Guidance -->
+<div class="text-center mb-12 animate-fade-in-up">
+<h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-primary mb-2">吸って</h2>
+</div>
+<!-- Impulse Button (The Pulse) -->
+<div class="relative flex items-center justify-center w-64 h-64 md:w-80 md:h-80 mb-16">
+<!-- Ripple Effect Rings -->
+<div class="absolute inset-0 rounded-full border border-primary/15 pulse-animation" style="animation-delay: -1s;"></div>
+<div class="absolute inset-4 rounded-full border border-primary/25 pulse-animation" style="animation-delay: -2s;"></div>
+<!-- Main Button -->
+<button id="impulse-button" class="relative w-48 h-48 md:w-56 md:h-56 bg-secondary-container rounded-full shadow-[0_8px_32px_-8px_rgba(43,96,133,0.25)] flex items-center justify-center text-on-secondary-container active:scale-95 transition-transform duration-200">
+</button>
+</div>
+<!-- Instructions Panel -->
+<div class="glass-panel rounded-xl p-6 md:p-8 max-w-md w-full text-center">
+<p class="text-body-lg font-body-lg text-on-surface">
+                連打しながら3-3-6呼吸を行ってください
+            </p>
+<div class="mt-4 flex justify-center gap-2">
+<span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary-container text-on-primary-container text-label-sm font-label-sm">3</span>
+<span class="text-on-surface-variant self-center">-</span>
+<span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-surface-variant text-on-surface-variant text-label-sm font-label-sm">3</span>
+<span class="text-on-surface-variant self-center">-</span>
+<span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-surface-variant text-on-surface-variant text-label-sm font-label-sm">6</span>
+</div>
+</div>
+</main>
+<script>
+        // Simple script to handle button interaction visual feedback
+        const impulseButton = document.getElementById('impulse-button');
+        impulseButton.addEventListener('mousedown', () => {
+            impulseButton.style.transform = 'scale(0.95)';
+        });
+        impulseButton.addEventListener('mouseup', () => {
+            impulseButton.style.transform = 'scale(1)';
+        });
+        impulseButton.addEventListener('mouseleave', () => {
+            impulseButton.style.transform = 'scale(1)';
+        });
+        
+        // Touch events for mobile
+        impulseButton.addEventListener('touchstart', () => {
+            impulseButton.style.transform = 'scale(0.95)';
+        });
+        impulseButton.addEventListener('touchend', () => {
+            impulseButton.style.transform = 'scale(1)';
+        });
+    </script>
+
+
+</body></html>

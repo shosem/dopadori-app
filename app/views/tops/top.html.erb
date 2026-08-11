@@ -1,3 +1,4 @@
 <h1 class="text-xl">おかえりなさい</h1>
 <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete } %>
 <%= link_to "代替行動一覧へ", alternative_actions_path %>
+<%= link_to "衝動が来た", new_urge_path %>

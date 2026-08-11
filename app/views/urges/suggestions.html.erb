@@ -1,0 +1,21 @@
+<h1>今の状況に合わせて行動を選びましょう</h1>
+
+<p>最も取り組みやすいものをひとつ試してみてください。</p>
+
+<div class="flex flex-col">
+  <% @suggestions.each do |span, actions| %>
+    <%# セクションdiv %>
+    <div>
+      <h2><%= AlternativeAction.time_span_label(span) %></h2>
+
+      <% actions.each do |action| %>
+        <%# カード %>
+        <div>
+          <%= button_to "#{action.title}", urge_path(@urge), params: { resolved: :took_action, alternative_action_id: action.id }, method: :patch %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<%= link_to "他の行動を選ぶ", suggestions_urge_path(@urge, all: 1) %>
