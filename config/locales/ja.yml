@@ -19,3 +19,8 @@ ja:
     submit:
       create: "作成"
       update: "保存"
+  alternative_actions:
+    time_span_descriptions:
+      immediate: "道具も準備もいらない、いまここでできること"
+      short: "少しだけ時間があるなら"
+      preparation: "準備できるなら、挑戦してみてほしいこと"
