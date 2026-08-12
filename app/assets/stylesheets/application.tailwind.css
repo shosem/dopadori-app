@@ -6,32 +6,43 @@
 @source "../../helpers";
 @source "../../javascript";
 
-/* docs/design_guideline.md「案2 親しみ / 安らぎ」のトークン。
-   --color-* から bg-cream / text-ink のようなユーティリティが自動生成される。
+/* docs/design_guideline.md(2026/08/11 改訂・寒色系)のトークン。
+   --color-* から bg-surface / text-ink のようなユーティリティが自動生成される。
    v4 では tailwind.config.js を作らず、設定はすべてここに集約する。 */
 @theme {
-  --color-cream: #fef6ee;      /* 背景 */
-  --color-cream-top: #fff2e4;  /* 背景グラデーションの上端 */
-  --color-accent: #f0895b;     /* 主アクセント: 衝動ボタン・主要アクション・ストリーク */
-  --color-calm: #7fb5a6;       /* 補助アクセント: 代替行動系 */
-  --color-ink: #43352b;        /* 本文。真っ黒を避けて柔らかさを出す */
-  --color-ink-sub: #a58a76;    /* サブ・補足 */
+  --color-surface: #f6faff;       /* 背景。全画面共通・単色 */
+  --color-card: #ffffff;          /* カード面 */
+  --color-primary: #2b6085;       /* 主アクション: 落ち着いた / 衝動がきた / ログイン */
+  --color-primary-soft: #cee2f5;  /* 副アクション: 代わりのことをする / 衝動ボタンの円 */
+  --color-ink: #131d24;           /* 本文。真っ黒を避けて柔らかさを出す */
+  --color-ink-sub: #41474e;       /* サブ・補足 */
+  --color-outline: #c1c7cf;       /* 面を区切る細い枠線。影の代わりに使う */
 
-  --radius-btn: 16px;
-  --radius-card: 20px;
+  /* flash。notice は緑ではなく主色の系統にして、成功を強調せず淡々と伝える。
+     alert の赤はシステム的な失敗の通知に限る(ユーザーの行動を責める赤は禁止)。
+     いずれも aetheric_calm の生成パレット由来なので、寒色の背景の上で浮かない。 */
+  --color-notice: #ebf5ff;
+  --color-notice-ink: #2b6085;
+  --color-alert: #ffdad6;
+  --color-alert-line: #ffb3ae;
+  --color-alert-ink: #93000a;
 
-  /* カードは白面をオレンジ味の淡い影でふわっと浮かせる */
-  --shadow-soft: 0 8px 24px -8px rgb(240 137 91 / 0.25);
+  --radius-btn: 1.5rem;
+  --radius-card: 1rem;
 
-  --font-sans: ui-rounded, "Hiragino Maru Gothic ProN", "Zen Maru Gothic", "Noto Sans JP", system-ui, sans-serif;
+  /* 影は黒で落とさず、主色を薄く広げて浮かせる */
+  --shadow-soft: 0 8px 32px -8px rgb(43 96 133 / 0.15);
+
+  /* Inter は日本語の字形を持たないため、日本語はフォールバックで表示される。
+     Inter が効くのはロゴと数字。日本語は角ゴシックになる(design_guideline.md)。 */
+  --font-sans: Inter, "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
 }
 
-/* 背景のグラデーションは全画面共通なので body に直接置く。
+/* 背景は全画面共通なので body に直接置く。
    ユーティリティで毎回書くと指定漏れが起きるため。 */
 @layer base {
   body {
-    background: linear-gradient(to bottom, var(--color-cream-top), var(--color-cream));
-    background-attachment: fixed;
+    background-color: var(--color-surface);
     color: var(--color-ink);
     font-family: var(--font-sans);
   }
