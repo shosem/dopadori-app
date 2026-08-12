@@ -24,7 +24,8 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body>
+  <%# 日本語ゴシックは既定のレンダリングだと太く出る。モックと同じ細さに揃える %>
+  <body class="antialiased">
     <%= render 'shared/flash' %>
     <main class="mx-auto max-w-md px-6 py-8">
       <%= yield %>
