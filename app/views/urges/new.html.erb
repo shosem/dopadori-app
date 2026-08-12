@@ -1,4 +1,21 @@
-<div data-controller="urge-button">
-  <%= form_with url: urges_path, method: :post %>
-  <button type="button">衝動ボタン</button>
+<div class="flex flex-col items-center gap-8 py-12" data-controller="urge-button">
+
+  <%# フェーズが変わるたびに書き換わるので、読み上げを追従させる %>
+  <p class="min-h-8 text-xl" data-urge-button-target="label" aria-live="polite">
+    押すと始まります
+  </p>
+
+  <%# 36秒の完了時に JS から requestSubmit() する。中身は要らない %>
+  <%= form_with url: urges_path, data: { urge_button_target: "form" } do %><% end %>
+
+  <%# 円が scale(1.4) まで膨らむので、はみ出さない大きさの枠で包む %>
+  <div class="flex items-center justify-center w-72 h-72">
+    <button
+      type="button"
+      aria-label="衝動ボタン"
+      class="w-40 h-40 rounded-full bg-sky-200 select-none touch-manipulation"
+      data-urge-button-target="circle"
+      data-action="click->urge-button#start"
+    ></button>
+  </div>
 </div>

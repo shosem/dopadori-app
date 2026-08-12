@@ -36,3 +36,8 @@
     font-family: var(--font-sans);
   }
 }
+
+[data-phase], button { -webkit-tap-highlight-color: transparent; }
+[data-phase="inhale"] { transform: scale(1.4); transition: transform 3s ease-in; }
+[data-phase="hold"]   { transform: scale(1.4); transition: none; }
+[data-phase="exhale"] { transform: scale(1);   transition: transform 6s ease-out; }
