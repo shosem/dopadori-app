@@ -10,6 +10,11 @@ ja:
         preparation: "準備が必要"
       user:
         name: 名前
+      urge:
+        trigger: トリガー
+      urge/trigger:
+        idle: 暇なとき
+        working: 作業中
   helpers:
     submit:
       create: "作成"
