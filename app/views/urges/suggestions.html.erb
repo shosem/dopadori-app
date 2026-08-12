@@ -1,21 +1,32 @@
-<h1>今の状況に合わせて行動を選びましょう</h1>
+<% all = params[:all].present? %>
 
-<p>最も取り組みやすいものをひとつ試してみてください。</p>
+<h1 class="text-2xl font-semibold text-ink">今の状況に合わせて<br>行動を選びましょう</h1>
 
-<div class="flex flex-col">
+<p class="mt-2 text-base text-ink-sub">最も取り組みやすいものをひとつ試してみてください。</p>
+
+<div class="mt-8 flex flex-col gap-8">
   <% @suggestions.each do |span, actions| %>
-    <%# セクションdiv %>
-    <div>
-      <h2><%= AlternativeAction.time_span_label(span) %></h2>
+    <section class="flex flex-col gap-3">
+      <%# 区分の説明は行動ごとではなく time_span ごとに置く。
+          「今すぐの提案ではない」ことを、下の枠ほど言葉でも伝える(requirements.md 2-2-1)。 %>
+      <p class="text-sm text-ink-sub">
+        <%= t("alternative_actions.time_span_descriptions.#{span}") %>
+      </p>
 
       <% actions.each do |action| %>
-        <%# カード %>
-        <div>
-          <%= button_to "#{action.title}", urge_path(@urge), params: { resolved: :took_action, alternative_action_id: action.id }, method: :patch %>
-        </div>
+        <%= render "suggestion", urge: @urge, action: action, span: span, compact: all %>
       <% end %>
-    </div>
+    </section>
   <% end %>
 </div>
 
-<%= link_to "他の行動を選ぶ", suggestions_urge_path(@urge, all: 1) %>
+<div class="mt-10 text-center">
+  <%# 全件表示中は同じリンクを出しても同じ画面に戻るだけなので、戻る導線に差し替える %>
+  <% if all %>
+    <%= link_to "おすすめに戻す", suggestions_urge_path(@urge),
+          class: "text-sm font-medium text-primary underline-offset-4 hover:underline" %>
+  <% else %>
+    <%= link_to "他の行動を選ぶ", suggestions_urge_path(@urge, all: 1),
+          class: "text-sm font-medium text-primary underline-offset-4 hover:underline" %>
+  <% end %>
+</div>

@@ -1,0 +1,50 @@
+<%# locals: (urge:, action:, span:, compact: false) %>
+
+<%#
+  requirements.md 2-2-1「immediate を主役にし、下に行くほど視覚的に控えめにする」を、
+  面の明るさ・枠線・影の3つで段階化する。高さは変えない(縦比の指定はこの画面には無い)。
+  compact は全件表示用。18件をカードで並べると縦に長くなりすぎるため、行に落とす。
+%>
+<%
+  card_styles = {
+    "immediate"   => "border border-primary/20 bg-card/80 shadow-soft",
+    "short"       => "border border-outline/30 bg-primary-soft/30",
+    "preparation" => "border border-outline/20 bg-primary-soft/15 opacity-90"
+  }
+
+  badge_styles = {
+    "immediate"   => "bg-primary/10 text-primary",
+    "short"       => "bg-primary-soft text-primary",
+    "preparation" => "bg-outline/30 text-ink-sub"
+  }
+
+  card_class =
+    if compact
+      "flex w-full items-center gap-3 rounded-card border border-outline/20 bg-card/60 px-4 py-3 text-left transition-transform active:scale-[0.99]"
+    else
+      "group relative flex w-full flex-col gap-2 overflow-hidden rounded-card px-6 py-4 text-left " \
+      "transition-transform active:scale-[0.99] #{card_styles[span]}"
+    end
+%>
+
+<%# 押した時点で took_action にするので、送るのは選んだ行動のIDだけ。
+    状態はコントローラが決める(viewed を送り込まれないようにするため)。 %>
+<%= button_to urge_path(urge),
+      params: { alternative_action_id: action.id },
+      method: :patch,
+      form_class: "w-full",
+      class: card_class do %>
+
+  <% if !compact && span == "immediate" %>
+    <%# 主役の1枚だけ、左端に主色の縦バーを立てる %>
+    <span class="absolute inset-y-0 left-0 w-1 bg-primary"></span>
+  <% end %>
+
+  <span class="inline-flex w-fit shrink-0 items-center rounded-full px-3 py-1 text-xs font-semibold <%= badge_styles[span] %>">
+    <%= AlternativeAction.time_span_label(span) %>
+  </span>
+
+  <span class="<%= compact ? "text-base text-ink" : "mt-1 text-xl text-ink" %>">
+    <%= action.title %>
+  </span>
+<% end %>

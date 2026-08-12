@@ -1,15 +1,50 @@
-<%= form_with model: @urge do |f| %>
+<%#
+  requirements.md §4 の縦比 1:2:7。上の任意入力は小さく、下の2ボタンを主役にする。
+  mt-auto でボタン群を下端へ寄せることで、急いでいる人が上を無視して即タップできる。
+%>
 
-  <div>
-    <%= f.label :trigger %>
-    <%= f.select :trigger, [["暇なとき", :idle], ["作業中", :working]], include_blank: "選ばない" %>
+<%= form_with model: @urge, class: "flex min-h-[70vh] flex-col" do |f| %>
+  <%# トリガー(約1割) %>
+  <div class="space-y-3">
+    <%= f.label :trigger, "トリガー(任意)", class: "block text-sm font-medium text-ink-sub" %>
+
+    <div class="flex items-center gap-3">
+      <%# ラジオを sr-only にして、直後のラベルをチップとして見せる。hidden ではなくこれを使うのは、キーボード操作と読み上げを残すため。 %>
+      <% Urge.triggers.keys.each do |key| %>
+        <div>
+          <%= f.radio_button :trigger, key, class: "peer sr-only" %>
+
+          <%= f.label :trigger, Urge.trigger_label(key), value: key,
+                class: "block cursor-pointer rounded-full border border-primary px-6 py-3 font-medium text-primary
+                        transition-colors hover:bg-primary-soft/40
+                        peer-checked:bg-primary-soft
+                        peer-focus-visible:ring-2 peer-focus-visible:ring-primary" %>
+        </div>
+      <% end %>
+
+      <span class="ml-auto text-xs text-ink-sub">スキップ可</span>
+    </div>
   </div>
 
- <div>
-    <%= f.label :memo %>
-    <%= f.text_area :memo %>
+  <%# メモ(約2割) %>
+  <div class="mt-12 space-y-3">
+    <%= f.label :memo, "メモ(任意)", class: "block text-sm font-medium text-ink-sub" %>
+
+    <%= f.text_area :memo, rows: 4, placeholder: "どんなきっかけだったかな？",
+          class: "w-full resize-none rounded-card border border-outline/40 bg-primary-soft/20 p-6
+                  text-ink placeholder:text-ink-sub/70
+                  focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden" %>
   </div>
 
-  <%= f.button "落ち着いた", name: "next", value: "calmed" %>
-  <%= f.button "代わりのことをする", name: "next", value: "suggestions" %>
+  <%# 主役の2ボタン(約7割の位置)。どちらも同じフォームの submit にして、「代わりのことをする」を押した時もメモとトリガーが保存されるようにしている。 %>
+
+  <div class="mt-auto flex flex-col gap-6 pt-12">
+    <%= f.button "落ち着いた", name: "next", value: "calmed",
+          class: "w-full rounded-card cursor-pointer bg-primary py-6 text-xl font-medium text-white
+                  shadow-soft transition-transform active:scale-[0.98]" %>
+
+    <%= f.button "代わりのことをする", name: "next", value: "suggestions",
+          class: "w-full rounded-card cursor-pointer bg-primary-soft py-6 text-xl font-medium text-primary
+                  transition-transform active:scale-[0.98]" %>
+  </div>
 <% end %>
