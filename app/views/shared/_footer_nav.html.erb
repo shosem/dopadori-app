@@ -1,0 +1,51 @@
+<%#
+  フッターナビ。fixed にしているのは、記録一覧が縦に長く、
+  スクロール中でも移動できるほうが速いため。
+
+  衝動ボタン画面では出さない。出し分けはレイアウト側の content_for で行う
+  (ビューの都合をコントローラに持ち込まないため)。
+
+  アイコンは Material Symbols を読み込まずインライン SVG で持つ。
+  外部フォントを1つ増やすと、本番のネット依存と初回描画の豆腐が増えるだけで、
+  ここで要るのは3つだけ。
+%>
+<%
+  items = [
+    { label: "ホーム", path: root_path,
+      d: [ "M3 10.75 12 3.5l9 7.25",
+           "M5.5 9.9V20a.5.5 0 0 0 .5.5h12a.5.5 0 0 0 .5-.5V9.9" ] },
+
+    # 棒4本。記録ページの棒グラフと同じ形にして、行き先が絵で分かるようにする
+    { label: "週間記録", path: urges_path,
+      d: [ "M4.75 19.5V13.5", "M9.75 19.5V8", "M14.75 19.5V15.25", "M19.25 19.5V4.5" ] },
+
+    { label: "代替行動", path: alternative_actions_path,
+      d: [ "M4 6.75h1.5", "M9 6.75h11", "M4 12h1.5", "M9 12h11", "M4 17.25h1.5", "M9 17.25h11" ] }
+  ]
+%>
+
+<nav class="fixed inset-x-0 bottom-0 z-40 border-t border-outline/40 bg-card/90 backdrop-blur-sm"
+     aria-label="メインナビゲーション">
+  <%# iPhone のホームバーぶんを内側に確保する。無いと最下段が指で押しにくい %>
+  <ul class="mx-auto flex max-w-md pb-[env(safe-area-inset-bottom)]">
+    <% items.each do |item| %>
+      <% current = current_page?(item[:path]) %>
+
+      <li class="flex-1">
+        <%# 現在地は色と太さの両方で示す。色だけだと差が小さすぎて分からない %>
+        <%= link_to item[:path],
+              aria: { current: current ? "page" : nil },
+              class: "flex flex-col items-center gap-1 py-2.5 #{current ? "text-primary" : "text-ink-sub"}" do %>
+          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <% item[:d].each do |d| %>
+              <path d="<%= d %>"></path>
+            <% end %>
+          </svg>
+
+          <span class="text-xs <%= "font-semibold" if current %>"><%= item[:label] %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</nav>
