@@ -93,4 +93,136 @@ RSpec.describe Urge, type: :model do
       expect { urge.user.destroy! }.to change(described_class, :count).by(-1)
     end
   end
+
+  describe "RECENT_DAYS" do
+    # 記録ページの「直近何日ぶんか」を決める唯一の場所。
+    # ここが1箇所に閉じていれば、あとから1ヶ月表示を足す時にコントローラの引数だけで済む。
+    it "既定の集計期間は7日" do
+      expect(described_class::RECENT_DAYS).to eq(7)
+    end
+  end
+
+  # 期間の境界は「ずれても画面は普通に表示される」種類のバグなので、
+  # 目視では見つからない。ここで固定する。
+  describe ".recent" do
+    let(:user) { create(:user) }
+
+    around do |example|
+      travel_to(Time.zone.parse("2026-08-12 12:00")) { example.run }
+    end
+
+    it "期間の下端(6日前の0時)ちょうどの記録を含む" do
+      urge = create(:urge, user: user, created_at: Time.zone.parse("2026-08-06 00:00:00"))
+
+      expect(user.urges.recent).to include(urge)
+    end
+
+    it "下端の1秒前の記録は含まない" do
+      urge = create(:urge, user: user, created_at: Time.zone.parse("2026-08-05 23:59:59"))
+
+      expect(user.urges.recent).not_to include(urge)
+    end
+
+    # 記録一覧は新しいものから読む画面なので、並び順もこのメソッドの責務に含める。
+    it "新しい順に並ぶ" do
+      older = create(:urge, user: user, created_at: Time.zone.parse("2026-08-10 09:00"))
+      newer = create(:urge, user: user, created_at: Time.zone.parse("2026-08-12 09:00"))
+
+      expect(user.urges.recent.to_a).to eq([ newer, older ])
+    end
+
+    it "日数を渡すと期間が変わる" do
+      urge = create(:urge, user: user, created_at: Time.zone.parse("2026-07-20 09:00"))
+
+      expect(user.urges.recent).not_to include(urge)
+      expect(user.urges.recent(30)).to include(urge)
+    end
+
+    it "他のユーザーの記録は含まない" do
+      other_users_urge = create(:urge, created_at: Time.zone.parse("2026-08-12 09:00"))
+
+      expect(user.urges.recent).not_to include(other_users_urge)
+    end
+  end
+
+  describe ".daily_counts" do
+    let(:user) { create(:user) }
+
+    subject(:counts) { user.urges.daily_counts }
+
+    context "日中に見たとき(2026-08-12 12:00 JST)" do
+      around do |example|
+        travel_to(Time.zone.parse("2026-08-12 12:00")) { example.run }
+      end
+
+      it "RECENT_DAYS 日ぶんを、古い順に、末尾が今日で返す" do
+        expect(counts.size).to eq(described_class::RECENT_DAYS)
+        expect(counts.first[:date]).to eq(Date.new(2026, 8, 6))
+        expect(counts.last[:date]).to eq(Date.new(2026, 8, 12))
+      end
+
+      # 記録が無い日の棒を消すと「その日が存在しない」ように見えてしまうため、
+      # 0 の日も要素として残す(モック確定時の決定)。
+      it "記録が1件も無くても、全ての日が 0 で埋まる" do
+        expect(counts.map { |day| day[:count] }).to eq([ 0 ] * described_class::RECENT_DAYS)
+      end
+
+      # daily_counts が recent を土台にしていれば自動的に通る。
+      # 別々に期間を計算していると、ここが片方だけずれる。
+      it "期間外の記録は数えない" do
+        create(:urge, user: user, created_at: Time.zone.parse("2026-08-05 23:59:59"))
+
+        expect(counts.sum { |day| day[:count] }).to eq(0)
+      end
+
+      it "同じ日の複数件をまとめて数える" do
+        [ "10:00", "13:00", "22:00" ].each do |time|
+          create(:urge, user: user, created_at: Time.zone.parse("2026-08-09 #{time}"))
+        end
+
+        expect(counts.find { |day| day[:date] == Date.new(2026, 8, 9) }[:count]).to eq(3)
+      end
+
+      # 本命。UTC のまま日付に落とすと 8/11 に数えられ、棒グラフが静かに1日ずれる。
+      it "日付が変わった直後(JST 00:15)の記録が、当日に入る" do
+        create(:urge, user: user, created_at: Time.zone.parse("2026-08-12 00:15"))
+
+        expect(counts.last).to eq({ date: Date.new(2026, 8, 12), count: 1 })
+      end
+
+      # グラフは「衝動が来た回数」。落ち着いたか見てしまったかで数を変えない。
+      # ここで viewed を除くと、正直に記録した人だけ棒が減る画面になる。
+      it "resolved の状態を問わず数える" do
+        create(:urge, user: user, created_at: Time.zone.parse("2026-08-12 08:00"))
+        create(:urge, :calmed, user: user, created_at: Time.zone.parse("2026-08-12 09:00"))
+        create(:urge, :took_action, user: user, created_at: Time.zone.parse("2026-08-12 10:00"))
+        create(:urge, :viewed, user: user, created_at: Time.zone.parse("2026-08-12 11:00"))
+
+        expect(counts.last[:count]).to eq(4)
+      end
+
+      it "他のユーザーの記録を数えない" do
+        create(:urge, created_at: Time.zone.parse("2026-08-12 09:00"))
+
+        expect(counts.sum { |day| day[:count] }).to eq(0)
+      end
+
+      it "日数を渡すと要素数が変わる" do
+        expect(user.urges.daily_counts(30).size).to eq(30)
+      end
+    end
+
+    context "日付が変わる直前に見たとき(2026-08-12 23:59:59 JST)" do
+      around do |example|
+        travel_to(Time.zone.parse("2026-08-12 23:59:59")) { example.run }
+      end
+
+      # 00:15 と逆側の境界。ここを翌日に数えると、寝る前の記録が明日の棒になる。
+      it "23:59 の記録が、翌日ではなく当日に入る" do
+        create(:urge, user: user, created_at: Time.zone.parse("2026-08-12 23:59:30"))
+
+        expect(counts.last).to eq({ date: Date.new(2026, 8, 12), count: 1 })
+      end
+    end
+  end
 end
