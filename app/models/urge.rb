@@ -27,4 +27,23 @@ class Urge < ApplicationRecord
   def self.resolved_label(key)
     I18n.t("activerecord.attributes.urge/resolved.#{key}")
   end
+
+  def self.current_streak
+    urge_dates = pluck(:created_at).map { |time| time.in_time_zone.to_date }.to_set
+
+    # 今日はまだ終わっていないので、記録が無くても連続を切らずに昨日から数える
+    # (日付が変わった直後に 0 を見せないため。requirements.md 7章)
+    today = Time.zone.today
+    start_date = urge_dates.include?(today) ? today : today - 1
+
+    count = 0
+    date = start_date
+
+    while urge_dates.include?(date)
+      count += 1
+      date -= 1
+    end
+
+    count
+  end
 end

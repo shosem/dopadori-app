@@ -1,4 +1,15 @@
 <h1 class="text-xl">おかえりなさい</h1>
+
+<%# 今続いている連続日数だけを出す。最高記録は持たない(app_concept.md 3章(4))。
+    0 のときは数字を出さない。「0日連続」は途切れたことを数字で突きつけるため。 %>
+<% if @streak.zero? %>
+  <p class="mt-4 text-ink-sub">心おだやかな一日を過ごせますよう</p>
+<% else %>
+  <p class="mt-4">
+    <span class="text-4xl font-semibold text-primary tabular-nums"><%= @streak %></span>
+    <span class="text-sm text-ink-sub">日連続、向き合っています</span>
+  </p>
+<% end %>
 <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete } %>
 <%= link_to "代替行動一覧へ", alternative_actions_path %>
 <%= link_to "衝動が来た", new_urge_path %>
