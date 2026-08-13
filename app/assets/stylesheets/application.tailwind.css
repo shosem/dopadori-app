@@ -15,7 +15,7 @@
      (design_guideline.md「背景を1段下げる」)。
      衝動ボタンの円だけはこの序列に乗らない。下の primary-container を参照。 */
   --color-surface: #e5eff9;       /* 背景。全画面共通・単色 */
-  --color-raised: #f6faff;        /* 背景より上に浮く面。連打後のメモ欄 */
+  --color-raised: #f6faff;        /* 背景より上に浮く面。ヘッダー / フッターナビ / 連打後のメモ欄 */
   --color-card: #ffffff;          /* カード面 */
   --color-primary: #2b6085;       /* 主アクション: 落ち着いた / 衝動がきた / ログイン */
   --color-primary-soft: #cee2f5;  /* 副アクション: 代わりのことをする */

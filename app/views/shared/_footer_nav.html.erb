@@ -24,7 +24,11 @@
   ]
 %>
 
-<nav class="fixed inset-x-0 bottom-0 z-40 border-t border-outline/40 bg-card/90 backdrop-blur-sm"
+<%# 面の色はヘッダーと揃える。背景と同じ色だと境界がぼやけるので、
+    浮いている面(--color-raised)を使って背景から1段持ち上げる。
+    白(--color-card)にしないのは、ヘッダー・フッター・カードが全部同じ面になり、
+    背景を1段下げた意味が薄れるため。 %>
+<nav class="fixed inset-x-0 bottom-0 z-40 border-t border-outline/40 bg-raised/90 backdrop-blur-xl"
      aria-label="メインナビゲーション">
   <%# iPhone のホームバーぶんを内側に確保する。無いと最下段が指で押しにくい %>
   <ul class="mx-auto flex max-w-md pb-[env(safe-area-inset-bottom)]">
