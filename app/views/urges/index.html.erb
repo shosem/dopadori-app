@@ -1,5 +1,10 @@
 <div class="flex flex-col gap-6">
-  <div class="bg-card rounded-card border border-outline/40 p-6 flex flex-col gap-4">
+  <%# 一覧を読んでいる間もグラフを見えたままにする。
+      一覧側を入れ子スクロールにする案は採らなかった(指がどちらの領域を掴んだか分からず、
+      高さも 100dvh からの引き算になってグラフの高さが変わるたびに壊れるため)。
+      top はヘッダー(h-14 + ノッチ)の真下。ヘッダーの高さを変えたらここも変わる。 %>
+  <div class="sticky top-[calc(3.5rem+env(safe-area-inset-top))] z-10
+              bg-card rounded-card border border-outline/40 p-6 flex flex-col gap-4">
     <div>
       <h2 class="text-ink text-base font-semibold">この1週間</h2>
 
