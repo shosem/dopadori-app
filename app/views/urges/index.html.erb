@@ -1,0 +1,97 @@
+<div class="flex flex-col gap-6">
+  <div class="bg-card rounded-card border border-outline/40 p-6 flex flex-col gap-4">
+    <div>
+      <h2 class="text-ink text-base font-semibold">この1週間</h2>
+
+      <p class="text-ink-sub text-sm">衝動が来た回数</p>
+    </div>
+
+    <%# グラフ %>
+    <% max = @daily_counts.map { |day| day[:count] }.max %>
+
+    <div class="grid grid-cols-7 gap-2.5 items-end">
+      <% @daily_counts.each do |day| %>
+        <% today = day[:date] == Time.zone.today %>
+
+        <div class="flex flex-col items-center gap-2">
+          <div class="h-24 w-full flex items-end justify-center">
+            <%# 高さは実行時に決まるため Tailwind のクラスでは書けない(ビルド時のスキャンに乗らない)。
+                0 の日を先に分岐させているので、この式で max が 0 になることはない。 %>
+            <% if day[:count].zero? %>
+              <div class="h-[3px] w-3.5 rounded-full bg-outline/70"></div>
+            <% else %>
+              <div class="w-3.5 rounded-full <%= today ? "bg-primary-soft" : "bg-primary" %>"
+                   style="height: <%= day[:count] * 100 / max %>%"></div>
+            <% end %>
+          </div>
+
+          <span class="text-xs <%= today ? "text-primary font-semibold" : "text-ink-sub" %>">
+            <%= today ? "今日" : day[:date].day %>
+          </span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# 記録一覧。記録が0件の日は行を出さない(0はグラフ側が見せているので、
+      一覧に「記録なし」を並べると宿題を突きつけることになる)。 %>
+  <% if @urges_by_date.empty? %>
+    <div class="flex flex-col items-center gap-1.5 py-8 text-center">
+      <p class="text-base text-ink">まだ記録がありません</p>
+
+      <p class="text-sm text-ink-sub">ホームから記録できます</p>
+    </div>
+  <% else %>
+    <%
+      # 「青系 = ユーザーが選んだ結果 / グレー = 未入力」で線を引く。
+      # 見てしまった記録も他の結果と同列の青にする(責める色を使わないのと同じ理由)。
+      # グレーが残るのは pending だけで、これは価値判断ではなく「まだ入力されていない」という事実。
+      #
+      # 枠線の太さは共通(下の border)にし、色はここで1回だけ指定する。
+      # 塗りのチップに border-transparent を共通側で持たせると、同じ border-color を
+      # 争うルールが2つになり、CSSで後に出力されたほう(transparent)が勝って枠線が消える。
+      chip_styles = {
+        "calmed" => "border-primary/45 text-primary",
+        "took_action" => "border-transparent bg-primary-soft text-primary",
+        "viewed" => "border-transparent bg-primary/10 text-primary",
+        "pending" => "border-outline/90 text-ink-sub font-medium"
+      }
+    %>
+
+    <div class="flex flex-col gap-5">
+      <% @urges_by_date.each do |date, urges| %>
+        <section>
+          <div class="mb-2 flex items-baseline justify-between border-b border-outline/45 pb-1.5">
+            <h2 class="text-sm font-semibold text-ink tabular-nums">
+              <%= "#{date.month}月#{date.day}日(#{t("date.abbr_day_names")[date.wday]})" %>
+            </h2>
+
+            <span class="text-xs text-ink-sub"><%= urges.size %>回</span>
+          </div>
+
+          <%# 行の間だけに線を引きたいので、各行に border を付けず親で divide-y を使う %>
+          <div class="divide-y divide-outline/25">
+            <% urges.each do |urge| %>
+              <%# 代替行動を選んだ記録は、メモよりも「何をしたか」を出す %>
+              <% detail = urge.took_action? ? urge.alternative_action&.title : urge.memo %>
+
+              <div class="grid grid-cols-[auto_auto_1fr] items-center gap-2.5 py-3">
+                <span class="text-sm text-ink-sub tabular-nums">
+                  <%= urge.created_at.strftime("%H:%M") %>
+                </span>
+
+                <%# 枠線のチップと塗りのチップが混ざるため、太さは全部に持たせて高さを揃える(色は chip_styles 側) %>
+                <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold <%= chip_styles[urge.resolved] %>">
+                  <%= Urge.resolved_label(urge.resolved) %>
+                </span>
+
+                <%# min-w-0 が無いと、長いメモがグリッドの枠を突き破ってカードごと横に広がる %>
+                <span class="min-w-0 truncate text-sm text-ink-sub"><%= detail %></span>
+              </div>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+    </div>
+  <% end %>
+</div>
