@@ -2,6 +2,11 @@ class UrgesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_urge, only: %i[edit update suggestions]
 
+  def index
+    @daily_counts = current_user.urges.daily_counts
+    @urges_by_date = current_user.urges.recent.includes(:alternative_action).group_by { |urge| urge.created_at.in_time_zone.to_date }
+  end
+
   def new
     @urge = current_user.urges.build
   end

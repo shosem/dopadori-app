@@ -107,8 +107,14 @@ Devise は `database_authenticatable, registerable, rememberable, validatable` �
 | 時間 | 内容 | ブランチ |
 |---|---|---|
 | 0〜60分 | Day 2 でデプロイが未完なら**ここで回収**(撤退ラインの受け皿) | |
-| 150分 | 記録一覧 + Chart.js 棒グラフ(直近7日の日別回数) | `feature/urge-chart` |
+| 150分 | 記録一覧 + 棒グラフ(直近7日の日別回数) | `feature/urge-chart` |
 | 60分 | 現在の連続日数をトップに表示 | `feature/streak` |
+
+**Chart.js は使わなかった(2026/08/13 判断)。** 数字・目盛り・凡例・ツールチップを全部出さない方針
+(`design_guideline.md`「記録ページの決定事項」)なので、残るのは棒7本であり、Chart.js の利点が消える。
+ERB + Tailwind + インラインの `style="height: N%"` で描いた。これにより
+依存の追加・Stimulus 1本・`disconnect()` での `chart.destroy()`(canvas の再利用事故)が全部不要になった。
+バッファ日に週合計や1ヶ月を作るなら、その時に導入を再検討する。
 
 **完了条件**: 死守4機能(認証 / 代替行動CRUD / 衝動記録 / 棒グラフ)+ ストリークが全部動き、
 **本番でも動いている**。
@@ -161,7 +167,16 @@ Devise は `database_authenticatable, registerable, rememberable, validatable` �
 1. **発表リハーサル + スライド**(最優先。ここは削れない)
 2. Capybara + Selenium の system spec(主要導線1〜2本)+ CI に test job 追加
 3. 代替行動まわりの Turbo Frames 化(学習目標の回収)
-4. 呼吸アニメーションの磨き込み
+4. **記録ページの期間切替**(グラフを1ヶ月にし、週を選ぶとその週の一覧が Turbo Frames で差し替わる)
+   - Day 4 で切った理由: 1ヶ月ぶんの一覧をそのまま並べると 50件超・2300px になり、
+     ページングを作らない方針では受け止められない。グラフだけ1ヶ月にすると
+     グラフと一覧の範囲が食い違う画面になる
+   - **週を選んで一覧だけ差し替える形なら両方解ける。**Turbo Frames の使いどころとしても素直
+   - Day 4 で「器」は入れてある(`Urge::RECENT_DAYS` の1定数と、`recent(days)` / `daily_counts(days)` の引数)。
+     コントローラで日数を渡すだけで期間は変わる
+   - 1ヶ月は棒30本になり1日1日は読めない。**週ごとの合計(棒4〜5本)**のほうが筋がよい可能性がある
+     (ヒートマップは `app_concept.md` で除外済み)
+5. 呼吸アニメーションの磨き込み
 
 ---
 

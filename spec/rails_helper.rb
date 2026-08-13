@@ -43,6 +43,10 @@ RSpec.configure do |config|
   # リクエストスペックで sign_in / sign_out を使えるようにする
   config.include Devise::Test::IntegrationHelpers, type: :request
 
+  # 日付の境界(JST 00:15 の記録が当日に入るか等)は、実行した時刻によって
+  # 「今日」が動くと検証にならない。travel_to で固定するために入れる。
+  config.include ActiveSupport::Testing::TimeHelpers
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
     Rails.root.join('spec/fixtures')
