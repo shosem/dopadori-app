@@ -225,4 +225,110 @@ RSpec.describe Urge, type: :model do
       end
     end
   end
+
+  # 算出ルールは requirements.md 7章。resolved を問わず全件を数え、
+  # 今日の記録が無ければ昨日を起点にする。最高記録は持たない。
+  describe ".current_streak" do
+    let(:user) { create(:user) }
+
+    subject(:streak) { user.urges.current_streak }
+
+    # 日付だけが問題なので時刻は固定でよい。境界を見る spec だけ時刻を明示する。
+    def urge_on(owner, date, time = "10:00", **attrs)
+      create(:urge, **attrs, user: owner, created_at: Time.zone.parse("#{date} #{time}"))
+    end
+
+    context "2026-08-13(木) 12:00 JST に見たとき" do
+      around do |example|
+        travel_to(Time.zone.parse("2026-08-13 12:00")) { example.run }
+      end
+
+      it "記録が1件も無ければ 0" do
+        expect(streak).to eq(0)
+      end
+
+      it "今日だけ記録があれば 1" do
+        urge_on(user, "2026-08-13")
+
+        expect(streak).to eq(1)
+      end
+
+      it "今日と昨日にあれば 2" do
+        urge_on(user, "2026-08-13")
+        urge_on(user, "2026-08-12")
+
+        expect(streak).to eq(2)
+      end
+
+      # 今日を「未確定」として扱う。日付が変わった直後に 0 を見せないため。
+      it "今日が無く、昨日まで3日続いていれば 3" do
+        [ "2026-08-12", "2026-08-11", "2026-08-10" ].each { |date| urge_on(user, date) }
+
+        expect(streak).to eq(3)
+      end
+
+      it "今日も昨日も無ければ 0" do
+        urge_on(user, "2026-08-11")
+        urge_on(user, "2026-08-10")
+
+        expect(streak).to eq(0)
+      end
+
+      it "同じ日に何件あっても 1日として数える" do
+        [ "08:00", "15:00", "23:00" ].each { |time| urge_on(user, "2026-08-13", time) }
+
+        expect(streak).to eq(1)
+      end
+
+      it "間に空いた日があれば、そこで止まる" do
+        urge_on(user, "2026-08-13")
+        urge_on(user, "2026-08-12")
+        urge_on(user, "2026-08-10")
+
+        expect(streak).to eq(2)
+      end
+
+      # 「見てしまった」を正直に記録した日が連続から外れると、記録そのものが罰になる。
+      it "viewed だけの日も数える" do
+        urge_on(user, "2026-08-13", resolved: :viewed)
+        urge_on(user, "2026-08-12", resolved: :viewed)
+
+        expect(streak).to eq(2)
+      end
+
+      it "他のユーザーの記録は数えない" do
+        urge_on(create(:user), "2026-08-13")
+
+        expect(streak).to eq(0)
+      end
+
+      # UTC のまま日付に落とすと、今日 00:15 の記録が昨日(8/12)扱いになる。
+      # すると今日が空になって昨日起点に切り替わり、8/11 まで繋がって 2 を返してしまう。
+      it "今日 00:15 の記録は今日として数える(昨日が空なら 1 で止まる)" do
+        urge_on(user, "2026-08-13", "00:15")
+        urge_on(user, "2026-08-11")
+
+        expect(streak).to eq(1)
+      end
+
+      # ストリークは棒グラフの期間(RECENT_DAYS)に縛られない。
+      it "7日を超えても数え続ける" do
+        (0..9).each { |n| urge_on(user, (Time.zone.today - n).to_s) }
+
+        expect(streak).to eq(10)
+      end
+    end
+
+    context "月初(2026-08-01) に見たとき" do
+      around do |example|
+        travel_to(Time.zone.parse("2026-08-01 12:00")) { example.run }
+      end
+
+      it "月をまたいでも連続する" do
+        [ "2026-08-01", "2026-07-31", "2026-07-30" ].each { |date| urge_on(user, date) }
+
+        expect(streak).to eq(3)
+      end
+    end
+  end
 end
