@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "tops#top"
   resources :alternative_actions, except: [ :show ]
-  resources :urges, only: %i[ new create edit update ] do
+  resources :urges, only: %i[ new create edit update index ] do
     member do
       get :suggestions
     end
