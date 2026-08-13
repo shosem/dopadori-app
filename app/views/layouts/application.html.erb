@@ -27,8 +27,26 @@
   <%# 日本語ゴシックは既定のレンダリングだと太く出る。モックと同じ細さに揃える %>
   <body class="antialiased">
     <%= render 'shared/flash' %>
-    <main class="mx-auto max-w-md px-6 py-8">
+
+    <%#
+      ヘッダーもフッターも fixed = 通常フローから抜けるので、main が上下から潜り込む。
+      出している側だけ padding で逃がす。iPhone のノッチとホームバーぶんも足す。
+
+      focus_mode は「この画面は集中させる」の意で、衝動ボタン画面が自分で立てる。
+      フッターナビの非表示とヘッダーのログアウト非表示を、1つの意図から動かす。
+      ナビの行き先は全部ログインが要るので、未ログイン時はヘッダーごと出さない。
+    %>
+    <% focus_mode = content_for?(:focus_mode) %>
+    <% show_nav = user_signed_in? && !focus_mode %>
+
+    <%= render "shared/header", focus_mode: focus_mode if user_signed_in? %>
+
+    <main class="mx-auto max-w-md px-6
+                 <%= user_signed_in? ? "pt-[calc(5.5rem+env(safe-area-inset-top))]" : "pt-8" %>
+                 <%= show_nav ? "pb-[calc(6rem+env(safe-area-inset-bottom))]" : "pb-8" %>">
       <%= yield %>
     </main>
+
+    <%= render "shared/footer_nav" if show_nav %>
   </body>
 </html>

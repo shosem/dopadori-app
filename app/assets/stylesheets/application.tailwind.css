@@ -10,10 +10,21 @@
    --color-* から bg-surface / text-ink のようなユーティリティが自動生成される。
    v4 では tailwind.config.js を作らず、設定はすべてここに集約する。 */
 @theme {
-  --color-surface: #f6faff;       /* 背景。全画面共通・単色 */
+  /* 面の明度は、背景より明るい側に3段。上に乗っている面ほど明るい。
+     背景 #e5eff9 < flash #ebf5ff < raised #f6faff < カード #ffffff
+     (design_guideline.md「背景を1段下げる」)。
+     衝動ボタンの円だけはこの序列に乗らない。下の primary-container を参照。 */
+  --color-surface: #e5eff9;       /* 背景。全画面共通・単色 */
+  --color-raised: #f6faff;        /* 背景より上に浮く面。ヘッダー / フッターナビ / 連打後のメモ欄 */
   --color-card: #ffffff;          /* カード面 */
   --color-primary: #2b6085;       /* 主アクション: 落ち着いた / 衝動がきた / ログイン */
-  --color-primary-soft: #cee2f5;  /* 副アクション: 代わりのことをする / 衝動ボタンの円 */
+  --color-primary-soft: #cee2f5;  /* 副アクション: 代わりのことをする */
+
+  /* 衝動ボタンの円。明るい側で分離しようとすると窓が狭く(実測 1.11:1)、
+     明度を稼ぐほど白カードに近づいて「押す対象」に見えなくなる。
+     背景より濃くして反転させ、4.01:1 で分離する。彩度は primary(#2b6085)より
+     1段低いので、画面最大の要素に高彩度を置くことにはならない。 */
+  --color-primary-container: #47799f;
   --color-ink: #131d24;           /* 本文。真っ黒を避けて柔らかさを出す */
   --color-ink-sub: #41474e;       /* サブ・補足 */
   --color-outline: #c1c7cf;       /* 面を区切る細い枠線。影の代わりに使う */
@@ -33,6 +44,11 @@
   /* 影は黒で落とさず、主色を薄く広げて浮かせる */
   --shadow-soft: 0 8px 32px -8px rgb(43 96 133 / 0.15);
 
+  /* 衝動ボタンの円は濃い面なので、薄い影(shadow-soft)は下に敷いても見えない。
+     同じ主色のまま濃度だけ上げる。1本目が接地感、2本目が高さ。
+     transform で拡縮するため、吸い切ると影も一緒に広がって浮き上がって見える。 */
+  --shadow-lift: 0 3px 6px -1px rgb(43 96 133 / 0.24), 0 16px 32px -10px rgb(43 96 133 / 0.5);
+
   /* Inter は日本語の字形を持たないため、日本語はフォールバックで表示される。
      Inter が効くのはロゴと数字。日本語は角ゴシックになる(design_guideline.md)。 */
   --font-sans: Inter, "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
@@ -49,6 +65,28 @@
 }
 
 [data-phase], button { -webkit-tap-highlight-color: transparent; }
-[data-phase="inhale"] { transform: scale(1.4); transition: transform 3s ease-in; }
-[data-phase="hold"]   { transform: scale(1.4); transition: none; }
-[data-phase="exhale"] { transform: scale(1);   transition: transform 6s ease-out; }
+
+/* 衝動ボタンの寸法と倍率。円・内側のリング・アニメーションを1組の値から出す。
+   ビュー側で h-48(192px)、CSS で inset-6(272px)と別々に置いていたため、
+   吸い切った円(268.8px)がリングに 1.2px 届かず二重線に見えていた。
+   @theme ではなくここに置くのは、未使用と判定された変数が出力から落ちるため。 */
+:root {
+  --urge-circle: 12rem;
+  --urge-scale: 1.4;
+}
+
+.urge-circle {
+  width: var(--urge-circle);
+  height: var(--urge-circle);
+}
+
+/* 吸い切った円の縁が、内側リングの内縁にちょうど接する大きさ。
+   border は要素の内側に描かれるので、線2本ぶんを外へ足す。 */
+.urge-ring {
+  width: calc(var(--urge-circle) * var(--urge-scale) + 2px);
+  height: calc(var(--urge-circle) * var(--urge-scale) + 2px);
+}
+
+[data-phase="inhale"] { transform: scale(var(--urge-scale)); transition: transform 3s ease-in; }
+[data-phase="hold"]   { transform: scale(var(--urge-scale)); transition: none; }
+[data-phase="exhale"] { transform: scale(1);                 transition: transform 6s ease-out; }

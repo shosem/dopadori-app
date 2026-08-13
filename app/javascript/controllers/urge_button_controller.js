@@ -23,7 +23,7 @@ export default class extends Controller {
     if (phase === this.phase) return
     this.phase = phase
 
-    this.labelTarget.textContent = { inhale: "吸って", hold: "止めて", exhale: "吐いて" }[phase]
+    this.labelTarget.textContent = { inhale: "3秒で息を吸って...", hold: "3秒息を止めて", exhale: "6秒でゆっくり吐きましょう" }[phase]
     this.circleTarget.dataset.phase = phase
   }
 
