@@ -63,7 +63,7 @@
         <section>
           <div class="mb-2 flex items-baseline justify-between border-b border-outline/45 pb-1.5">
             <h2 class="text-sm font-semibold text-ink tabular-nums">
-              <%= "#{date.month}月#{date.day}日(#{t("date.abbr_day_names")[date.wday]})" %>
+              <%= date.month %>月<%= date.day %>日(<%= t("date.abbr_day_names")[date.wday] %>)
             </h2>
 
             <span class="text-xs text-ink-sub"><%= urges.size %>回</span>
