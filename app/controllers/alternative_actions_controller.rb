@@ -15,7 +15,8 @@ class AlternativeActionsController < ApplicationController
     if @alternative_action.save
       redirect_to alternative_actions_path, notice: "代替行動を登録しました"
     else
-      flash.now[:alert] = "登録できませんでした"
+      # flash は出さない。フォームが shared/error_messages で「タイトルを入力してください」と
+      # 具体的に出すので、その上に「登録できませんでした」を重ねても情報が増えない。
       render :new, status: :unprocessable_content
     end
   end
@@ -26,7 +27,6 @@ class AlternativeActionsController < ApplicationController
     if @alternative_action.update(alternative_action_params)
       redirect_to alternative_actions_path, notice: "代替行動を更新しました"
     else
-      flash.now[:alert] = "更新できませんでした"
       render :edit, status: :unprocessable_content
     end
   end
