@@ -4,7 +4,9 @@ class Urge < ApplicationRecord
   belongs_to :user
   belongs_to :alternative_action, optional: true
 
-  enum :resolved, { pending: 0, calmed: 1, took_action: 2, viewed: 3 }, default: :pending
+  # 「我慢できなかった」はここには入れない。resolved は衝動ボタンのフローの結果、
+  # gave_in はその後どうなったかで、軸が違う(両方同時に成り立つ)。
+  enum :resolved, { pending: 0, calmed: 1, took_action: 2 }, default: :pending
   enum :trigger, { idle: 0, working: 1 }
 
   scope :recent, ->(days = RECENT_DAYS) {

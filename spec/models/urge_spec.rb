@@ -4,9 +4,9 @@ RSpec.describe Urge, type: :model do
   describe "resolved" do
     # 整数との対応を変えると、保存済みレコードの状態が黙ってずれる。
     # ここを固定しておくことで、うっかり並べ替えた時に気づける。
-    it "4つの状態が定義された整数に対応している" do
+    it "3つの状態が定義された整数に対応している" do
       expect(described_class.resolveds)
-        .to eq({ "pending" => 0, "calmed" => 1, "took_action" => 2, "viewed" => 3 })
+        .to eq({ "pending" => 0, "calmed" => 1, "took_action" => 2 })
     end
 
     it "未指定なら pending になる" do
@@ -34,6 +34,43 @@ RSpec.describe Urge, type: :model do
 
       expect(described_class.calmed).to include(calmed)
       expect(described_class.calmed).not_to include(pending)
+    end
+  end
+
+  describe "gave_in" do
+    # false は「まだ何も言っていない」であって「我慢できた」ではない。
+    # true を既定にすると、全レコードがアプリの知らない成功を主張することになる。
+    it "既定では false" do
+      expect(described_class.new.gave_in).to be(false)
+    end
+
+    # モデルの default: を通らない経路(insert_all / seed)でも false であること。
+    # nil が混ざると、一覧の分岐が黙って「印なし」に倒れる。
+    it "モデルを経由しない挿入でも false になる" do
+      user = create(:user)
+      now = Time.current
+      described_class.insert_all([ { user_id: user.id, created_at: now, updated_at: now } ])
+
+      expect(described_class.order(:id).last.gave_in).to be(false)
+    end
+
+    # gave_in を enum ではなく独立した列にした理由そのもの。
+    # 排他にすると、我慢できなかったに変えた時点で「代替行動をやった」事実が消える。
+    it "resolved と同時に成り立ち、選んだ代替行動も消えない" do
+      urge = create(:urge, :took_action, :gave_in)
+
+      expect(urge.resolved).to eq("took_action")
+      expect(urge.gave_in).to be(true)
+      expect(urge.alternative_action).to be_present
+    end
+
+    it "落ち着いた記録にも後から立てられる" do
+      urge = create(:urge, :calmed)
+
+      urge.update!(gave_in: true)
+
+      expect(urge.reload.resolved).to eq("calmed")
+      expect(urge.gave_in).to be(true)
     end
   end
 
@@ -190,13 +227,13 @@ RSpec.describe Urge, type: :model do
         expect(counts.last).to eq({ date: Date.new(2026, 8, 12), count: 1 })
       end
 
-      # グラフは「衝動が来た回数」。落ち着いたか見てしまったかで数を変えない。
-      # ここで viewed を除くと、正直に記録した人だけ棒が減る画面になる。
-      it "resolved の状態を問わず数える" do
+      # グラフは「衝動が来た回数」。どう終わったかで数を変えない。
+      # ここで gave_in を除くと、正直に記録した人だけ棒が減る画面になる。
+      it "resolved の状態と gave_in を問わず数える" do
         create(:urge, user: user, created_at: Time.zone.parse("2026-08-12 08:00"))
         create(:urge, :calmed, user: user, created_at: Time.zone.parse("2026-08-12 09:00"))
         create(:urge, :took_action, user: user, created_at: Time.zone.parse("2026-08-12 10:00"))
-        create(:urge, :viewed, user: user, created_at: Time.zone.parse("2026-08-12 11:00"))
+        create(:urge, :gave_in, user: user, created_at: Time.zone.parse("2026-08-12 11:00"))
 
         expect(counts.last[:count]).to eq(4)
       end
@@ -288,10 +325,10 @@ RSpec.describe Urge, type: :model do
         expect(streak).to eq(2)
       end
 
-      # 「見てしまった」を正直に記録した日が連続から外れると、記録そのものが罰になる。
-      it "viewed だけの日も数える" do
-        urge_on(user, "2026-08-13", resolved: :viewed)
-        urge_on(user, "2026-08-12", resolved: :viewed)
+      # 「我慢できなかった」を正直に記録した日が連続から外れると、記録そのものが罰になる。
+      it "gave_in だけの日も数える" do
+        urge_on(user, "2026-08-13", gave_in: true)
+        urge_on(user, "2026-08-12", gave_in: true)
 
         expect(streak).to eq(2)
       end

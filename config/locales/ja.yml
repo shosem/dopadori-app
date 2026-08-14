@@ -12,6 +12,7 @@ ja:
         name: 名前
       urge:
         trigger: トリガー
+        gave_in: 我慢できなかった
       urge/trigger:
         idle: 暇なとき
         working: 作業中
@@ -21,7 +22,6 @@ ja:
         pending: 記録のみ
         calmed: 落ち着いた
         took_action: 代わりのことをした
-        viewed: 見てしまった
   helpers:
     submit:
       create: "作成"

@@ -15,8 +15,9 @@ FactoryBot.define do
       alternative_action { association :alternative_action, user: user }
     end
 
-    trait :viewed do
-      resolved { :viewed }
+    # resolved と直交するので、他の trait と重ねて使える(:took_action, :gave_in など)
+    trait :gave_in do
+      gave_in { true }
     end
   end
 end
