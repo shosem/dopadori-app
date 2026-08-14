@@ -267,20 +267,17 @@
           <div class="listrow">今日 14:20 <span class="st">落ち着いた</span></div>
           <div class="listrow">今日 11:05 <span class="st">代替行動</span></div>
           <div class="listrow">昨日 23:40 <span class="st">未選択 ⋯</span></div>
-          <div class="branch-note">各行を「見てしまった」に更新可(viewed)</div>
+          <div class="branch-note">行をタップして詳細へ(S-12)</div>
         </div>
       </div>
       <div class="arrow">↘<small>(B)新規作成</small></div>
       <div class="sc plain">
-        <div class="bar"><span>新規(見てしまった)</span><span class="id">S-13</span></div>
+        <div class="bar"><span>記録の詳細</span><span class="id">S-12</span></div>
         <div class="body">
-          <div class="t">新しく記録を作成<br>(resolved=viewed)</div>
-          <div class="lbl" style="margin-top:8px;">トリガー(任意)</div>
-          <div class="chips"><span class="chip">暇なとき</span><span class="chip">作業中</span></div>
-          <div class="lbl" style="margin-top:7px;">メモ(任意)</div>
-          <div class="field">きっかけがあれば…</div>
-          <div class="btn" style="margin-top:auto;">記録する</div>
-          <div class="branch-note">S-05の入力UIを使い回し</div>
+          <div class="t">日時 / 状態 / 選んだこと<br>トリガー / メモ</div>
+          <div class="lbl" style="margin-top:8px;">我慢できなかった</div>
+          <div class="chips"><span class="chip">チェックで付け外し</span></div>
+          <div class="branch-note">(B)の新規作成もここに合流する<br>resolved は pending のまま</div>
         </div>
       </div>
     </div>
@@ -292,8 +289,8 @@
       <li><b>S-04(衝動ボタン中)</b>は、連打+3-3-6呼吸を3セット=36秒。サーバー通信なしのStimulus+CSSアニメーション。詳細は app_concept.md 3章。</li>
       <li><b>S-05(連打後の入力)</b>の縦比率 1:2:7(トリガー:メモ:アクション)。任意入力を小さく、主役の2ボタンを大きく。急ぐ人は上を無視して即タップできる。</li>
       <li><b>S-07(代替行動の提案)</b>は各 time_span から1つずつランダム提案。immediate を主役に、下へ「時間があるなら」で降りていく。登録0件の枠は非表示。</li>
-      <li><b>viewed(見てしまった)</b>は S-04〜S-05 のフロー内には出さず、必ず E ゾーンの別入口から記録する(過去の結果と未来の宣言を混ぜない)。</li>
-      <li>S-12(記録一覧)は、E の「過去から選ぶ」と、MVPの「記録の閲覧」を兼ねられる可能性がある(実装時に判断)。</li>
+      <li><b>gave_in(我慢できなかった)</b>は S-04〜S-05 のフロー内には出さず、必ず E ゾーンの別入口から記録する(過去の結果と未来の宣言を混ぜない)。<b>resolved の4つ目の状態ではなく独立した列</b>にしてあるので、「落ち着いた」と同時に成り立つ(requirements.md 3章)。</li>
+      <li>S-12(記録の詳細)に (A)(B) 両方が合流する。一覧の行タップでも、トップからの新規作成でもここに来る。</li>
       <li>画面名・S番号は仮。実装時に確定。</li>
     </ul>
   </div>
