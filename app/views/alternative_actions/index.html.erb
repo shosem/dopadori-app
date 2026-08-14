@@ -1,17 +1,27 @@
-<div>
-  <h1>代替行動一覧</h1>
+<div class="flex flex-col gap-6">
+  <div>
+    <h1 class="text-xl font-semibold text-ink">代替行動</h1>
 
-  <%= link_to "＋作成", new_alternative_action_path %>
+    <%# 代替行動という語を初めて見る画面なので、1行だけ言い換えを添える %>
+    <p class="mt-1 text-sm text-ink-sub">衝動が来たときに、代わりにやること</p>
+  </div>
 
-  <%# 即できる行動一覧 %>
-  <%= render "time_span_section", title: "即", actions: @alternative_actions.immediate %>
+  <%# 主アクションは「衝動が来た」なので、ここは副アクションの色にする %>
+  <%= link_to "代替行動を追加する", new_alternative_action_path,
+        class: "block rounded-card bg-primary-soft py-4 text-center font-semibold text-primary
+                transition-transform active:scale-[0.99]" %>
 
-  <%# 5分ほどでできる行動一覧 %>
-  <%= render "time_span_section", title: "5分ほど", actions: @alternative_actions.short %>
+  <%#
+    3区分に視覚的な重みの差をつけない。提案画面(_suggestion)は immediate を主役に
+    して下ほど控えめにしているが、あれは衝動が来た瞬間に選ぶ画面だから。
+    ここは管理画面なので3つとも対等に扱う。
 
-  <%# 準備がいる行動一覧 %>
-  <%= render "time_span_section", title: "長め", actions: @alternative_actions.preparation %>
-
-  <%= link_to "トップに戻る", root_path %>
-
+    登録0件の区分も枠ごと出す。提案画面は隠すが(空欄は宿題を突きつけるため)、
+    管理画面では「ここに追加できる」と分かる必要がある。
+  %>
+  <% AlternativeAction.time_spans.keys.each do |span| %>
+    <%= render "time_span_section",
+          span: span,
+          actions: @alternative_actions.select { |action| action.time_span == span } %>
+  <% end %>
 </div>

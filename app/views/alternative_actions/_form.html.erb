@@ -1,17 +1,54 @@
 <%# locals: (alternative_action:) %>
 
-<%= form_with model: alternative_action do |f| %>
-  <%= render 'shared/error_messages', resource: alternative_action %>
+<%= form_with model: alternative_action, class: "flex flex-col gap-6" do |f| %>
+  <%= render "shared/error_messages", resource: alternative_action %>
 
-  <div>
-    <%= f.label :title %>
-    <%= f.text_field :title %>
+  <div class="space-y-2">
+    <%= f.label :title, "やること", class: "block text-sm font-medium text-ink-sub" %>
+
+    <%= f.text_field :title, placeholder: "腕立て10回",
+          class: "w-full rounded-card border border-outline/40 bg-raised px-4 py-3.5
+                  text-ink placeholder:text-ink-sub/70
+                  focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden" %>
   </div>
 
-  <div>
-    <%= f.label :time_span %>
-    <%= f.select :time_span, AlternativeAction.time_span_options %>
+  <div class="space-y-2">
+    <%= f.label :time_span, "どれくらい時間がかかる?", class: "block text-sm font-medium text-ink-sub" %>
+
+    <%#
+      select ではなく選択肢を並べる。3つしかない上に、それぞれの説明文が ja.yml にある。
+      ドロップダウンだと説明を出せず、開くまで中身が分からない。
+
+      ラジオを sr-only にして直後のラベルを装飾するのは、連打後の入力画面の
+      トリガー選択と同じ作り。キーボード操作と読み上げを残すため hidden は使わない。
+    %>
+    <div class="flex flex-col gap-2">
+      <% AlternativeAction.time_spans.keys.each do |span| %>
+        <div>
+          <%= f.radio_button :time_span, span, class: "peer sr-only" %>
+
+          <%= f.label :time_span, value: span,
+                class: "block cursor-pointer rounded-card border border-outline/60 bg-card px-4 py-3
+                        transition-colors hover:border-primary/40
+                        peer-checked:border-primary peer-checked:bg-primary-soft
+                        peer-focus-visible:ring-2 peer-focus-visible:ring-primary" do %>
+            <span class="block font-semibold text-primary">
+              <%= AlternativeAction.time_span_label(span) %>
+            </span>
+
+            <span class="mt-0.5 block text-xs text-ink-sub">
+              <%= t("alternative_actions.time_span_descriptions.#{span}") %>
+            </span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
-  <%= f.submit %>
+  <%= f.submit "保存",
+        class: "w-full cursor-pointer rounded-card bg-primary py-4 text-lg font-medium text-white
+                shadow-soft transition-transform active:scale-[0.98]" %>
 <% end %>
+
+<%= link_to "やめる", alternative_actions_path,
+      class: "mt-4 block text-center text-sm text-ink-sub" %>
