@@ -26,8 +26,6 @@
 
   <%# 日本語ゴシックは既定のレンダリングだと太く出る。モックと同じ細さに揃える %>
   <body class="antialiased">
-    <%= render 'shared/flash' %>
-
     <%#
       ヘッダーもフッターも fixed = 通常フローから抜けるので、main が上下から潜り込む。
       出している側だけ padding で逃がす。iPhone のノッチとホームバーぶんも足す。
@@ -44,6 +42,12 @@
     <main class="mx-auto max-w-md px-6
                  <%= user_signed_in? ? "pt-[calc(5.5rem+env(safe-area-inset-top))]" : "pt-8" %>
                  <%= show_nav ? "pb-[calc(6rem+env(safe-area-inset-bottom))]" : "pb-8" %>">
+      <%#
+        flash は main の中に置く。body 直下だと、fixed なヘッダーの裏に潜って
+        見えないまま main だけが押し下げられる(実際にそうなっていた)。
+      %>
+      <%= render "shared/flash" %>
+
       <%= yield %>
     </main>
 
