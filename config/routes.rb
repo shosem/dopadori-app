@@ -15,9 +15,19 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "tops#top"
   resources :alternative_actions, except: [ :show ]
-  resources :urges, only: %i[ new create edit update index ] do
+  resources :urges, only: %i[ new create edit update index show ] do
     member do
       get :suggestions
+      # 状態はコントローラが決める、を守るため update に相乗りさせない。
+      # update は既に3つの分岐(took_action / 提案へ / calmed)を持っている。
+      patch :gave_in
+    end
+
+    collection do
+      # 衝動ボタンを押す間もなく直行した分を、あとから1件作る(requirements.md 5章 B)。
+      # create(連打完了で作る)と混ぜない。混ぜると、あの create! が
+      # 「何が起きて作られた記録か」を表さなくなる。
+      post :gave_in, action: :create_gave_in
     end
   end
 end

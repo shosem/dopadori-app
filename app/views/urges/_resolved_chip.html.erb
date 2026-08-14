@@ -1,0 +1,20 @@
+<%# locals: (resolved:) %>
+
+<%
+  # 「青系 = ユーザーが選んだ結果 / グレー = 未入力」で線を引く。
+  # グレーが残るのは pending だけで、これは価値判断ではなく「まだ入力されていない」という事実。
+  # gave_in はここには出さない。resolved と軸が違うので、同じチップの列に混ぜない。
+  #
+  # 枠線の太さは共通(下の border)にし、色はここで1回だけ指定する。
+  # 塗りのチップに border-transparent を共通側で持たせると、同じ border-color を
+  # 争うルールが2つになり、CSSで後に出力されたほう(transparent)が勝って枠線が消える。
+  styles = {
+    "calmed" => "border-primary/45 text-primary",
+    "took_action" => "border-transparent bg-primary-soft text-primary",
+    "pending" => "border-outline/90 text-ink-sub font-medium"
+  }
+%>
+
+<span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold <%= styles[resolved] %>">
+  <%= Urge.resolved_label(resolved) %>
+</span>

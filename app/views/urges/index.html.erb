@@ -47,21 +47,9 @@
       <p class="text-sm text-ink-sub">ホームから記録できます</p>
     </div>
   <% else %>
-    <%
-      # 「青系 = ユーザーが選んだ結果 / グレー = 未入力」で線を引く。
-      # 見てしまった記録も他の結果と同列の青にする(責める色を使わないのと同じ理由)。
-      # グレーが残るのは pending だけで、これは価値判断ではなく「まだ入力されていない」という事実。
-      #
-      # 枠線の太さは共通(下の border)にし、色はここで1回だけ指定する。
-      # 塗りのチップに border-transparent を共通側で持たせると、同じ border-color を
-      # 争うルールが2つになり、CSSで後に出力されたほう(transparent)が勝って枠線が消える。
-      chip_styles = {
-        "calmed" => "border-primary/45 text-primary",
-        "took_action" => "border-transparent bg-primary-soft text-primary",
-        "viewed" => "border-transparent bg-primary/10 text-primary",
-        "pending" => "border-outline/90 text-ink-sub font-medium"
-      }
-    %>
+    <%# 行がリンクであることは見た目に出ていないので、言葉で補う。
+        矢印の意味までは説明しない(詳細画面を開けば「我慢できなかった」と書いてある)。 %>
+    <p class="-mt-2 text-xs text-ink-sub">記録をタップすると詳細を開けます</p>
 
     <div class="flex flex-col gap-5">
       <% @urges_by_date.each do |date, urges| %>
@@ -80,19 +68,30 @@
               <%# 代替行動を選んだ記録は、メモよりも「何をしたか」を出す %>
               <% detail = urge.took_action? ? urge.alternative_action&.title : urge.memo %>
 
-              <div class="grid grid-cols-[auto_auto_1fr] items-center gap-2.5 py-3">
+              <%# 行ごとリンクにする。チップだけを押させると指に対して的が小さい。
+                  最後の列は gave_in の印の指定席で、印が無い行も幅を空けておく
+                  (有る行だけ列が伸び縮みすると、時刻とチップの位置が行ごとにずれる)。 %>
+              <%= link_to urge_path(urge),
+                    class: "grid grid-cols-[auto_auto_1fr_1.25rem] items-center gap-2.5 py-3" do %>
                 <span class="text-sm text-ink-sub tabular-nums">
                   <%= urge.created_at.strftime("%H:%M") %>
                 </span>
 
-                <%# 枠線のチップと塗りのチップが混ざるため、太さは全部に持たせて高さを揃える(色は chip_styles 側) %>
-                <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold <%= chip_styles[urge.resolved] %>">
-                  <%= Urge.resolved_label(urge.resolved) %>
-                </span>
+                <%= render "urges/resolved_chip", resolved: urge.resolved %>
 
                 <%# min-w-0 が無いと、長いメモがグリッドの枠を突き破ってカードごと横に広がる %>
                 <span class="min-w-0 truncate text-sm text-ink-sub"><%= detail %></span>
-              </div>
+
+                <span class="flex justify-center">
+                  <% if urge.gave_in? %>
+                    <%# 意味を持たない印にする。矢印や目のような「絵」は、20px では潰れるか、
+                        別の記号(別タブで開く・閲覧)と誤読される。丸なら壊れようがなく、
+                        価値判断も持たない。何の印かは詳細画面が言う。 %>
+                    <span class="h-2 w-2 rounded-full bg-primary"
+                          role="img" aria-label="我慢できなかった"></span>
+                  <% end %>
+                </span>
+              <% end %>
             <% end %>
           </div>
         </section>

@@ -1,0 +1,67 @@
+<% date = @urge.created_at.in_time_zone %>
+
+<div class="flex flex-col gap-6">
+  <div>
+    <h1 class="text-xl font-semibold text-ink tabular-nums">
+      <%= date.month %>月<%= date.day %>日(<%= t("date.abbr_day_names")[date.wday] %>)
+      <%= date.strftime("%H:%M") %>
+    </h1>
+
+    <p class="mt-1 text-sm text-ink-sub">衝動が来た時刻</p>
+  </div>
+
+  <%# 入っていない項目は行ごと出さない。空欄を並べると「埋めていない」ように見えるため。 %>
+  <dl class="divide-y divide-outline/25 rounded-card border border-outline/40 bg-card px-5">
+    <div class="grid grid-cols-[5rem_1fr] items-center gap-3 py-4">
+      <dt class="text-sm text-ink-sub">状態</dt>
+      <dd><%= render "urges/resolved_chip", resolved: @urge.resolved %></dd>
+    </div>
+
+    <% if @urge.alternative_action %>
+      <div class="grid grid-cols-[5rem_1fr] items-center gap-3 py-4">
+        <dt class="text-sm text-ink-sub">選んだこと</dt>
+        <dd class="text-ink"><%= @urge.alternative_action.title %></dd>
+      </div>
+    <% end %>
+
+    <% if @urge.trigger %>
+      <div class="grid grid-cols-[5rem_1fr] items-center gap-3 py-4">
+        <dt class="text-sm text-ink-sub">トリガー</dt>
+        <dd class="text-ink"><%= Urge.trigger_label(@urge.trigger) %></dd>
+      </div>
+    <% end %>
+
+    <% if @urge.memo.present? %>
+      <div class="grid grid-cols-[5rem_1fr] gap-3 py-4">
+        <dt class="text-sm text-ink-sub">メモ</dt>
+        <dd class="whitespace-pre-line text-ink"><%= @urge.memo %></dd>
+      </div>
+    <% end %>
+  </dl>
+
+  <%#
+    「我慢できなかった」の付け外し。トグルなので確認ダイアログは挟まない
+    (毎回出ると煩わしく、押し間違えてももう一度押せば戻るため)。
+    代わりに flash で向きを伝える。
+
+    ラベルでチェックボックスごと包んでいるのは、行のどこを押しても切り替わるようにするため。
+    小さい四角だけがタップ対象だと、スマホでは狙いにくい。
+  %>
+  <%= form_with model: @urge, url: gave_in_urge_path(@urge), method: :patch,
+        data: { controller: "auto-submit" } do |f| %>
+    <%= f.label :gave_in,
+          class: "flex cursor-pointer items-center gap-3 rounded-card border border-outline/40 bg-card p-5" do %>
+      <%= f.check_box :gave_in,
+            class: "h-5 w-5 shrink-0 cursor-pointer accent-primary",
+            data: { action: "change->auto-submit#submit" } %>
+
+      <span class="text-ink">我慢できなかった</span>
+    <% end %>
+  <% end %>
+
+  <p class="text-xs leading-relaxed text-ink-sub">
+    あとから気づいたときに残せます。外すこともできます。
+  </p>
+
+  <%= link_to "週間記録へ戻る", urges_path, class: "text-sm text-primary" %>
+</div>
