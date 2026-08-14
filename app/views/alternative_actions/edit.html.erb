@@ -1,3 +1,16 @@
-<h1>代替行動編集</h1>
+<div class="flex flex-col gap-6">
+  <h1 class="text-xl font-semibold text-ink">代替行動を編集</h1>
 
-<%= render 'form', alternative_action: @alternative_action %>
+  <%= render "form", alternative_action: @alternative_action %>
+
+  <%#
+    削除は一覧ではなくここに置く。一覧に並べると18行ぶんの削除が指の届く場所に出て、
+    誤タップが起きやすい。1階層奥に入れて、さらに確認を挟む。
+
+    赤にしない。design_guideline.md「赤の例外」は、赤をシステム側の不具合を伝える
+    用途に限っている。これはユーザーが意図して行う操作なので警告色を使わない。
+  %>
+  <%= link_to "この代替行動を削除する", alternative_action_path(@alternative_action),
+        data: { turbo_method: :delete, turbo_confirm: "削除しますか?" },
+        class: "block text-center text-sm text-ink-sub underline" %>
+</div>

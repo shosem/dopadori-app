@@ -1,22 +1,97 @@
-<h1 class="text-xl">おかえりなさい</h1>
+<%#
+  縦を伸ばして、主役のブロックを画面の中ほどに置く。
+  ヘッダーとフッターの高さから正確に引き算する手もあるが、そうすると
+  ヘッダーの高さ 3.5rem を持つ場所が3箇所目になる(_header の h-14、
+  urges/index の sticky、ここ)。円とリングの寸法で同じ失敗をしているので、
+  高さに依存しない dvh の近似にしてある。数センチずれても困らない場所。
+%>
+<div class="flex min-h-[70dvh] flex-col">
+  <% if @has_records %>
+    <%# カードごと縦中央に置く。上に貼り付けるとボタンとの間が間延びする %>
+    <div class="flex flex-1 items-center">
+      <div class="w-full rounded-card border border-outline/40 bg-card px-6 py-12 text-center">
+        <p class="text-sm tracking-wider text-ink-sub">おかえりなさい</p>
 
-<%# 今続いている連続日数だけを出す。最高記録は持たない(app_concept.md 3章(4))。
-    0 のときは数字を出さない。「0日連続」は途切れたことを数字で突きつけるため。 %>
-<% if @streak.zero? %>
-  <p class="mt-4 text-ink-sub">心おだやかな一日を過ごせますよう</p>
-<% else %>
-  <p class="mt-4">
-    <span class="text-4xl font-semibold text-primary tabular-nums"><%= @streak %></span>
-    <span class="text-sm text-ink-sub">日連続、向き合っています</span>
-  </p>
-<% end %>
-<%# 代替行動一覧・衝動一覧はフッターナビ、ログアウトはヘッダーへ移した。
-    「衝動が来た」はナビゲーションではなくこの画面の主役なので、ここに残す。 %>
-<%= link_to "衝動が来た", new_urge_path %>
+        <%# 今続いている連続日数だけを出す。最高記録は持たない(app_concept.md 3章(4))。
+            0 のときは数字を出さない。「0日連続」は途切れたことを数字で突きつけるため。 %>
+        <% if @streak.zero? %>
+          <p class="mt-4 text-ink-sub">心おだやかな一日を過ごせますよう</p>
+        <% else %>
+          <span class="mt-3 block text-6xl font-semibold leading-none text-primary tabular-nums">
+            <%= @streak %>
+          </span>
 
-<%# 衝動ボタンを押す間もなく直行した分の入口(requirements.md 5章 B)。
-    衝動ボタンのフロー内には出さない。「見てしまった(過去の結果)」と
-    「代替行動を選ぶ(未来の宣言)」は発生タイミングが違うため。
-    主役の「衝動が来た」より小さく置く。 %>
-<%= link_to "我慢できなかったことを記録する", gave_in_urges_path,
-      class: "text-sm text-ink-sub underline" %>
+          <span class="mt-2 block text-sm text-ink-sub">日連続、向き合っています</span>
+        <% end %>
+
+        <%#
+          直近7日の棒。記録ページと違って日付ラベルも目盛りも出さない。
+          ここは「最近こんな感じ」の温度感だけ伝える場所で、読むための画面ではない。
+          詳しくは週間記録タブに行けばある。
+        %>
+        <% max = @daily_counts.map { |day| day[:count] }.max %>
+
+        <div class="mt-9 grid grid-cols-7 items-end gap-2.5">
+          <% @daily_counts.each do |day| %>
+            <div class="flex h-20 w-full items-end justify-center">
+              <%# 高さは実行時に決まるため Tailwind のクラスでは書けない(ビルド時のスキャンに乗らない) %>
+              <% if day[:count].zero? %>
+                <div class="h-[3px] w-3 rounded-full bg-outline/70"></div>
+              <% else %>
+                <div class="w-3 rounded-full <%= day[:date] == Time.zone.today ? "bg-primary-soft" : "bg-primary" %>"
+                     style="height: <%= day[:count] * 100 / max %>%"></div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <%#
+      記録がまだ無い人には棒グラフを出さない。7本の細い線が並ぶと
+      「まだ何も無い」を図で強調することになり、空の器を見せることになる。
+
+      挨拶もカードに入れない。下の一言が背景の上に置かれるので、
+      ここだけ白い面にすると宙に浮いて見える。
+    %>
+    <div class="pt-2 text-center">
+      <p class="text-sm tracking-wider text-ink-sub">おかえりなさい</p>
+
+      <p class="mt-3 text-ink-sub">心おだやかな一日を過ごせますよう</p>
+    </div>
+
+    <%# 残りの縦をここが全部吸って、中身を中央に置く %>
+    <div class="flex flex-1 items-center justify-center py-8">
+      <% if @suggested_action %>
+        <%#
+          まだ記録が無い人に、その人が既に持っている代替行動を1つ見せる。
+          「悪い刺激は0秒で来る。だから代替行動も0秒で始められるように用意しておく」
+          というコンセプトを、説明せずに自分の持ち物で伝えるため(app_concept.md)。
+        %>
+        <div class="text-center">
+          <p class="text-sm text-ink-sub">衝動が来たら、たとえば</p>
+
+          <%# タイトルは長さがまちまち(「腕立て10回」〜「コンビニで好きなお菓子を1つ買う」)。
+              折り返す前提で、行の分かれ方が偏らないように text-balance を効かせる。 %>
+          <p class="mt-4 text-2xl font-medium leading-relaxed text-balance text-ink">
+            「<%= @suggested_action.title %>」
+          </p>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="mt-8 flex flex-col gap-5">
+    <%# この画面の主役。ピル形状で、他のどのボタンより大きく置く %>
+    <%= link_to "衝動が来た", new_urge_path,
+          class: "block rounded-btn bg-primary py-4 text-center text-lg font-medium text-white
+                  shadow-soft transition-transform active:scale-[0.98]" %>
+
+    <%# 衝動ボタンを押す間もなく直行した分の入口(requirements.md 5章 B)。
+        衝動ボタンのフロー内には出さない。「我慢できなかった(過去の結果)」と
+        「代替行動を選ぶ(未来の宣言)」は発生タイミングが違うため。
+        主役の「衝動が来た」より小さく置く。 %>
+    <%= link_to "我慢できなかったことを記録する", gave_in_urges_path,
+          class: "block text-center text-sm text-ink-sub underline" %>
+  </div>
+</div>

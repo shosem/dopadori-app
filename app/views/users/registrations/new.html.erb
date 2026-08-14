@@ -1,34 +1,56 @@
-<h2>Sign up</h2>
+<% field_class = "w-full rounded-card border border-outline/40 bg-raised px-4 py-3.5 text-ink
+                 placeholder:text-ink-sub/70
+                 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden" %>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "shared/error_messages", resource: resource %>
+<div class="flex flex-col gap-8">
+  <div class="text-center">
+    <%# ヘッダーを出さない画面なので、ここでロゴタイプを出して視線の起点にする %>
+    <p class="text-3xl font-semibold tracking-tight text-primary">Dopadori</p>
 
-  <div class="field">
-    <p><%= f.label :name %></p>
-    <p><%= f.text_field :name, autofocus: true, autocomplete: "name" %></p>
+    <%# サイズと色はモック準拠(headline-lg-mobile = 24px / weight 600 / 主色) %>
+    <h1 class="mt-8 text-2xl font-semibold tracking-tight text-primary">はじめまして</h1>
+
+    <p class="mt-2 text-sm text-ink-sub">Dopadoriで衝動を管理してみましょう</p>
   </div>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
+  <div class="rounded-card border border-outline/40 bg-card p-6">
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name),
+          html: { class: "flex flex-col gap-5" }) do |f| %>
+      <%= render "shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <p><%= f.label :password %></p>
-    <% if @minimum_password_length %>
-      <p><em>(<%= @minimum_password_length %> characters minimum)</em></p>
+      <div class="space-y-2">
+        <%= f.label :name, "名前", class: "block text-sm font-medium text-ink-sub" %>
+        <%= f.text_field :name, autofocus: true, autocomplete: "name", class: field_class %>
+      </div>
+
+      <div class="space-y-2">
+        <%= f.label :email, "メールアドレス", class: "block text-sm font-medium text-ink-sub" %>
+        <%= f.email_field :email, autocomplete: "email",
+              placeholder: "your@email.com", class: field_class %>
+      </div>
+
+      <div class="space-y-2">
+        <%= f.label :password, "パスワード", class: "block text-sm font-medium text-ink-sub" %>
+
+        <%# 弾かれてから知るより先に伝える。パスワードリセットを入れていないので、
+            ここで失敗させると復旧の手段が無い。 %>
+        <% if @minimum_password_length %>
+          <p class="text-xs text-ink-sub"><%= @minimum_password_length %>文字以上</p>
+        <% end %>
+
+        <%= f.password_field :password, autocomplete: "new-password", class: field_class %>
+      </div>
+
+      <div class="space-y-2">
+        <%= f.label :password_confirmation, "パスワード(確認)", class: "block text-sm font-medium text-ink-sub" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: field_class %>
+      </div>
+
+      <%= f.submit "はじめる",
+            class: "mt-1 w-full cursor-pointer rounded-card bg-primary py-4 text-lg font-medium text-white
+                    shadow-soft transition-transform active:scale-[0.98]" %>
     <% end %>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
   </div>
 
-  <div class="field">
-    <p><%= f.label :password_confirmation %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Sign up" %>
-  </div>
-<% end %>
-
-<%= render "users/shared/links" %>
+  <%= render "users/shared/links" %>
+</div>

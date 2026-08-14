@@ -1,19 +1,40 @@
-<%# locals: (title:, actions:) %>
+<%# locals: (span:, actions:) %>
 
-<div>
-  <h2><%= title %></h2>
+<section>
+  <div class="mb-1 flex items-center gap-2">
+    <span class="inline-flex items-center rounded-full border border-primary/45 px-2.5 py-0.5
+                 text-xs font-semibold text-primary">
+      <%= AlternativeAction.time_span_label(span) %>
+    </span>
+  </div>
+
+  <p class="mb-2 text-xs text-ink-sub">
+    <%= t("alternative_actions.time_span_descriptions.#{span}") %>
+  </p>
 
   <% if actions.present? %>
-    <div class="flex flex-col gap-2">
-      <% actions.each do |act| %>
-        <div class="flex items-center gap-2">
-          <p><%= act.title %></p>
-          <%= link_to "編集", edit_alternative_action_path(act) %>
-          <%= link_to "削除", alternative_action_path(act), data: { turbo_method: :delete, turbo_confirm: "削除しますか？" } %>
-        </div>
+    <%# 行の間だけに線を引きたいので、各行に border を付けず親で divide-y を使う %>
+    <div class="divide-y divide-outline/25 rounded-card border border-outline/40 bg-card">
+      <% actions.each do |action| %>
+        <%# 行ごとリンクにして編集画面へ送る。削除はそちらに置く。
+            一覧に編集・削除を並べると18行で36個の操作要素になり、
+            長いタイトルが省略され、削除の誤タップも起きやすい。
+            記録一覧(urges)の「行タップで詳細へ」とも作法が揃う。 %>
+        <%= link_to edit_alternative_action_path(action),
+              class: "grid grid-cols-[1fr_auto] items-center gap-2.5 px-4 py-3.5" do %>
+          <%# min-w-0 が無いと、長いタイトルがグリッドの枠を突き破ってカードごと横に広がる %>
+          <span class="min-w-0 truncate text-ink"><%= action.title %></span>
+
+          <svg viewBox="0 0 24 24" class="h-4.5 w-4.5 text-ink-sub" fill="none" stroke="currentColor"
+               stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m9 6 6 6-6 6"></path>
+          </svg>
+        <% end %>
       <% end %>
     </div>
   <% else %>
-    <p>代替行動がありません</p>
+    <p class="rounded-card border border-outline/40 bg-card px-4 py-4 text-center text-sm text-ink-sub">
+      まだありません
+    </p>
   <% end %>
-</div>
+</section>

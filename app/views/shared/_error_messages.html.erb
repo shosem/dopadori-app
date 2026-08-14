@@ -1,6 +1,15 @@
+<%#
+  入力エラーは flash の alert と同じ赤にする。design_guideline.md「赤の例外」が
+  禁じているのは「ユーザーの行動を責める赤」(見てしまった記録・ストリークが途切れた表示・
+  衝動の記録)であって、赤そのものではない。フォームの入力ミスは行動を責める対象ではなく、
+  「保存に失敗した」と同じ種類の通知なので例外の側に入る。
+
+  色を flash と揃えているのは、同じ「うまくいかなかった」を2つの見た目で伝えないため。
+%>
 <% if resource.errors.any? %>
-  <div id="error_explanation" data-turbo-temporary>
-    <ul>
+  <div id="error_explanation" role="alert" data-turbo-temporary
+       class="rounded-card border border-alert-line bg-alert px-4 py-3.5 text-alert-ink">
+    <ul class="space-y-1 text-sm">
       <% resource.errors.full_messages.each do |message| %>
         <li><%= message %></li>
       <% end %>
