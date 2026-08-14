@@ -10,6 +10,11 @@ ja:
         preparation: "準備が必要"
       user:
         name: 名前
+        # Devise の既定訳は「Eメール」。フォームのラベルは「メールアドレス」なので、
+        # エラー文だけ別の呼び方になるのを防ぐ。
+        email: メールアドレス
+        password: パスワード
+        password_confirmation: パスワード(確認)
       urge:
         trigger: トリガー
         gave_in: 我慢できなかった

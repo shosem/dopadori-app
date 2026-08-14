@@ -1,0 +1,51 @@
+<%#
+  未ログインの画面ではヘッダーを出さないので、ここでロゴタイプを出す。
+  モックには円のアイコンバッジがあるが、このアプリにロゴマークが無いため、
+  視線の起点は文字で作る。
+%>
+
+<% field_class = "w-full rounded-card border border-outline/40 bg-raised px-4 py-3.5 text-ink
+                 placeholder:text-ink-sub/70
+                 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden" %>
+
+<div class="flex flex-col gap-8">
+  <div class="text-center">
+    <p class="text-3xl font-semibold tracking-tight text-primary">Dopadori</p>
+
+    <h1 class="mt-8 text-xl font-semibold text-ink">こんにちは</h1>
+
+    <p class="mt-2 text-sm text-ink-sub">Dopadoriで衝動を管理してみましょう</p>
+  </div>
+
+  <div class="rounded-card border border-outline/40 bg-card p-6">
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name),
+          html: { class: "flex flex-col gap-5" }) do |f| %>
+      <div class="space-y-2">
+        <%= f.label :email, "メールアドレス", class: "block text-sm font-medium text-ink-sub" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email",
+              placeholder: "your@email.com", class: field_class %>
+      </div>
+
+      <div class="space-y-2">
+        <%= f.label :password, "パスワード", class: "block text-sm font-medium text-ink-sub" %>
+        <%= f.password_field :password, autocomplete: "current-password", class: field_class %>
+      </div>
+
+      <%# rememberable を入れているので、それを使う口をここに置く。
+          チェックボックスが無いと remember_me が立たず、設定が死んだままになる。
+          スマホで毎回ログインし直すのは、衝動が来た時に一番やりたくない操作。 %>
+      <% if devise_mapping.rememberable? %>
+        <%= f.label :remember_me, class: "flex cursor-pointer items-center gap-2.5 text-sm text-ink-sub" do %>
+          <%= f.check_box :remember_me, class: "h-4 w-4 shrink-0 cursor-pointer accent-primary" %>
+          ログインしたままにする
+        <% end %>
+      <% end %>
+
+      <%= f.submit "ログイン",
+            class: "mt-1 w-full cursor-pointer rounded-card bg-primary py-4 text-lg font-medium text-white
+                    shadow-soft transition-transform active:scale-[0.98]" %>
+    <% end %>
+  </div>
+
+  <%= render "users/shared/links" %>
+</div>
