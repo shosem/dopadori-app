@@ -28,7 +28,8 @@
 %>
 
 <%# 押した時点で took_action にするので、送るのは選んだ行動のIDだけ。
-    状態はコントローラが決める(viewed を送り込まれないようにするため)。 %>
+    ユーザーが宣言しているのは「どの代替行動を選んだか」であって、resolved は
+    その結果として決まる値なので、フォームからは送らない(requirements.md 3章)。 %>
 <%= button_to urge_path(urge),
       params: { alternative_action_id: action.id },
       method: :patch,

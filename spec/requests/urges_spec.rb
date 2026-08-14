@@ -74,12 +74,20 @@ RSpec.describe "Urges", type: :request do
       end
 
       # 状態はコントローラが決める。urge_params が resolved も gave_in も許可していないので、
-      # このフローに送りつけても通らない。「我慢できなかった」は専用の入口からだけ立つ。
-      it "resolved を直接送りつけても無視される" do
+      # このフローに送りつけても通らない。
+      #
+      # ここは「落ち着いた」の枝では検証できない。直後に calmed! が走って上書きするため、
+      # permit されていても結果が同じになる(実際、この形の spec は permit しても落ちなかった)。
+      # resolved を触らずに進む suggestions の枝で見る必要がある。
+      it "提案画面へ進む時に resolved を送りつけても pending のまま" do
         patch urge_path(urge),
-              params: { next: "calmed", urge: { resolved: "took_action", memo: "" } }
+              params: { next: "suggestions", urge: { resolved: "took_action", memo: "" } }
 
-        expect(urge.reload.resolved).to eq("calmed")
+        urge.reload
+        expect(urge.resolved).to eq("pending")
+        # permit されていると、代替行動を選んでいないのに took_action の記録ができる。
+        # 一覧は took_action? を見て代替行動名を出すので、行の詳細が空になる。
+        expect(urge.alternative_action_id).to be_nil
       end
 
       it "gave_in を直接送りつけても立たない" do
