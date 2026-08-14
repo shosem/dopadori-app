@@ -100,6 +100,10 @@
 - DB接続は Docker 内部ネットワーク経由(ホスト名 `db`、ポート5432)。`.env` の DATABASE_URL / TEST_DATABASE_URL を参照。
 - マイグレーション: `docker compose exec web rails db:migrate`
 - テスト実行: `docker compose exec web rspec`(または bundle exec rspec)
+- **デモ用データの投入: `docker compose exec web bin/rails demo:seed`**(`lib/tasks/demo.rake`)
+  - ログインは **`demo@example.com` / `demodemo`**。直近14日ぶんの記録が入る
+  - **development 専用**(それ以外の環境では `abort` する)。本番にデモアカウントは作らない
+  - 何度叩いてもこのユーザーの記録を消してから作り直すので増殖しない。代替行動18件は消さない
 
 ---
 
