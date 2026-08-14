@@ -16,6 +16,11 @@ RSpec.describe "Urges", type: :request do
     it "記録を作成できない" do
       expect { post urges_path }.not_to change(Urge, :count)
     end
+
+    it "あとからの記録も作成できない" do
+      expect { post gave_in_urges_path, params: { urge: { occurred_on: Time.zone.today.to_s, memo: "" } } }
+        .not_to change(Urge, :count)
+    end
   end
 
   describe "ログイン済み" do
@@ -68,13 +73,28 @@ RSpec.describe "Urges", type: :request do
         expect(response).to redirect_to(suggestions_urge_path(urge))
       end
 
-      # viewed は「過去の結果」であり、このフローの選択肢として出さない(requirements.md 3章)。
-      # resolved を許可していないので、送りつけられても遷移は変わらない。
-      it "resolved を直接送りつけても viewed にはならない" do
+      # 状態はコントローラが決める。urge_params が resolved も gave_in も許可していないので、
+      # このフローに送りつけても通らない。
+      #
+      # ここは「落ち着いた」の枝では検証できない。直後に calmed! が走って上書きするため、
+      # permit されていても結果が同じになる(実際、この形の spec は permit しても落ちなかった)。
+      # resolved を触らずに進む suggestions の枝で見る必要がある。
+      it "提案画面へ進む時に resolved を送りつけても pending のまま" do
         patch urge_path(urge),
-              params: { next: "calmed", urge: { resolved: "viewed", memo: "" } }
+              params: { next: "suggestions", urge: { resolved: "took_action", memo: "" } }
 
-        expect(urge.reload.resolved).to eq("calmed")
+        urge.reload
+        expect(urge.resolved).to eq("pending")
+        # permit されていると、代替行動を選んでいないのに took_action の記録ができる。
+        # 一覧は took_action? を見て代替行動名を出すので、行の詳細が空になる。
+        expect(urge.alternative_action_id).to be_nil
+      end
+
+      it "gave_in を直接送りつけても立たない" do
+        patch urge_path(urge),
+              params: { next: "calmed", urge: { gave_in: true, memo: "" } }
+
+        expect(urge.reload.gave_in).to be(false)
       end
     end
 
@@ -141,8 +161,161 @@ RSpec.describe "Urges", type: :request do
       end
     end
 
+    describe "記録の詳細(show)" do
+      it "自分の記録を開ける" do
+        urge = create(:urge, :calmed, user: user, memo: "通知が来て気になった")
+
+        get urge_path(urge)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("通知が来て気になった")
+      end
+
+      # took_action + gave_in は両立する。ここで代替行動が消えると、
+      # gave_in を boolean にした理由(起きたことを消さない)が画面側で崩れる。
+      it "代わりのことをした上で我慢できなかった記録は、選んだ行動も出る" do
+        action = create(:alternative_action, user: user, title: "散歩に行く")
+        urge = create(:urge, :gave_in, user: user, resolved: :took_action, alternative_action: action)
+
+        get urge_path(urge)
+
+        expect(response.body).to include("散歩に行く")
+      end
+    end
+
+    describe "我慢できなかったの付け外し(gave_in)" do
+      let(:urge) { create(:urge, :calmed, user: user) }
+
+      it "立てられる" do
+        patch gave_in_urge_path(urge), params: { urge: { gave_in: "1" } }
+
+        expect(urge.reload.gave_in).to be(true)
+        expect(response).to redirect_to(urge_path(urge))
+        expect(flash[:notice]).to eq("我慢できなかった記録をつけました")
+      end
+
+      # チェックボックスは外した時に hidden の "0" が飛ぶ。ここが通らないと
+      # 「一度つけたら戻せない」になり、確認ダイアログを外した判断が成立しない。
+      it "外せる" do
+        urge.update!(gave_in: true)
+
+        patch gave_in_urge_path(urge), params: { urge: { gave_in: "0" } }
+
+        expect(urge.reload.gave_in).to be(false)
+        expect(flash[:notice]).to eq("取り消しました")
+      end
+
+      # flash を body 直下に置いていた時、fixed なヘッダーの裏に潜って見えないまま
+      # main だけが押し下げられていた。redirect_to の戻り値だけ見ても気づけないので、
+      # 遷移先まで追って、main の中に描かれていることを確かめる。
+      it "遷移先で flash が main の中に描かれる" do
+        patch gave_in_urge_path(urge), params: { urge: { gave_in: "1" } }
+        follow_redirect!
+
+        expect(response.body).to include("我慢できなかった記録をつけました")
+        expect(response.body.index("<main")).to be < response.body.index("我慢できなかった記録をつけました")
+      end
+
+      # resolved は別の軸なので、付け外ししても動かない。
+      it "resolved は変わらない" do
+        patch gave_in_urge_path(urge), params: { urge: { gave_in: "1" } }
+
+        expect(urge.reload.resolved).to eq("calmed")
+      end
+
+      # gave_in_params は :gave_in しか許可していないので、相乗りは効かない。
+      it "同じリクエストで memo を書き換えられない" do
+        urge.update!(memo: "もとのメモ")
+
+        patch gave_in_urge_path(urge), params: { urge: { gave_in: "1", memo: "上書き" } }
+
+        expect(urge.reload.memo).to eq("もとのメモ")
+      end
+    end
+
+    # 衝動ボタンを押す間もなく直行した分を、あとから記録する経路(requirements.md 5章 B)。
+    describe "あとから記録する(new_gave_in / create_gave_in)" do
+      let(:today) { Time.zone.today.to_s }
+
+      it "入力画面が開ける" do
+        get gave_in_urges_path
+
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "gave_in が立った記録が1件作られる" do
+        expect { post gave_in_urges_path, params: { urge: { occurred_on: today, memo: "" } } }
+          .to change(user.urges, :count).by(1)
+
+        expect(user.urges.order(:id).last.gave_in).to be(true)
+      end
+
+      # 3-3-6 を通っていないので、記録すべき「結果」が存在しない。
+      # ここで calmed などを入れると、やっていないことを記録することになる。
+      it "resolved は pending のまま" do
+        post gave_in_urges_path, params: { urge: { occurred_on: today, memo: "" } }
+
+        expect(user.urges.order(:id).last).to be_pending
+      end
+
+      it "メモも一緒に保存できる" do
+        post gave_in_urges_path, params: { urge: { occurred_on: today, memo: "広告を見てしまって" } }
+
+        expect(user.urges.order(:id).last.memo).to eq("広告を見てしまって")
+      end
+
+      it "作った記録の詳細へ飛ぶ" do
+        post gave_in_urges_path, params: { urge: { occurred_on: today, memo: "" } }
+
+        expect(response).to redirect_to(urge_path(user.urges.order(:id).last))
+        expect(flash[:notice]).to eq("記録しました")
+      end
+
+      # 遡って記録した分は、その日の棒として立つ。今日に寄せてしまうと
+      # 「昨日の衝動が今日に記録される」ことになり、振り返りが実態とずれる。
+      it "遡った日付を指定すると、その日の記録として入る" do
+        travel_to(Time.zone.parse("2026-08-14 09:30")) do
+          post gave_in_urges_path, params: { urge: { occurred_on: "2026-08-11", memo: "" } }
+
+          expect(user.urges.order(:id).last.created_at.in_time_zone.to_date)
+            .to eq(Date.new(2026, 8, 11))
+        end
+      end
+
+      # 未来の記録は棒グラフの窓にもストリークにも入らず、どこからも見えなくなる。
+      # form の max はブラウザ任せなので、サーバ側で弾けていることを見る。
+      it "未来の日付では作られない" do
+        travel_to(Time.zone.parse("2026-08-14 09:30")) do
+          expect { post gave_in_urges_path, params: { urge: { occurred_on: "2026-08-15", memo: "" } } }
+            .not_to change(user.urges, :count)
+
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+      end
+
+      # 棒グラフとストリークは created_at だけを見るので、この経路の記録も同じように数える。
+      # ここが数えられないと、正直に記録した日だけ棒が立たない画面になる。
+      it "その日の集計に入る" do
+        post gave_in_urges_path, params: { urge: { occurred_on: today, memo: "" } }
+
+        expect(user.urges.daily_counts.last[:count]).to eq(1)
+      end
+    end
+
     describe "他人の記録" do
       let(:other_urge) { create(:urge, user: other) }
+
+      it "詳細を開けない" do
+        get urge_path(other_urge)
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "我慢できなかったを立てられない" do
+        patch gave_in_urge_path(other_urge), params: { urge: { gave_in: "1" } }
+
+        expect(response).to have_http_status(:not_found)
+        expect(other_urge.reload.gave_in).to be(false)
+      end
 
       it "入力画面を開けない" do
         get edit_urge_path(other_urge)

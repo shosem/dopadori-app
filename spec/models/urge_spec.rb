@@ -4,9 +4,9 @@ RSpec.describe Urge, type: :model do
   describe "resolved" do
     # 整数との対応を変えると、保存済みレコードの状態が黙ってずれる。
     # ここを固定しておくことで、うっかり並べ替えた時に気づける。
-    it "4つの状態が定義された整数に対応している" do
+    it "3つの状態が定義された整数に対応している" do
       expect(described_class.resolveds)
-        .to eq({ "pending" => 0, "calmed" => 1, "took_action" => 2, "viewed" => 3 })
+        .to eq({ "pending" => 0, "calmed" => 1, "took_action" => 2 })
     end
 
     it "未指定なら pending になる" do
@@ -34,6 +34,84 @@ RSpec.describe Urge, type: :model do
 
       expect(described_class.calmed).to include(calmed)
       expect(described_class.calmed).not_to include(pending)
+    end
+  end
+
+  describe "gave_in" do
+    # false は「まだ何も言っていない」であって「我慢できた」ではない。
+    # true を既定にすると、全レコードがアプリの知らない成功を主張することになる。
+    it "既定では false" do
+      expect(described_class.new.gave_in).to be(false)
+    end
+
+    # モデルの default: を通らない経路(insert_all / seed)でも false であること。
+    # nil が混ざると、一覧の分岐が黙って「印なし」に倒れる。
+    it "モデルを経由しない挿入でも false になる" do
+      user = create(:user)
+      now = Time.current
+      described_class.insert_all([ { user_id: user.id, created_at: now, updated_at: now } ])
+
+      expect(described_class.order(:id).last.gave_in).to be(false)
+    end
+
+    # gave_in を enum ではなく独立した列にした理由そのもの。
+    # 排他にすると、我慢できなかったに変えた時点で「代替行動をやった」事実が消える。
+    it "resolved と同時に成り立ち、選んだ代替行動も消えない" do
+      urge = create(:urge, :took_action, :gave_in)
+
+      expect(urge.resolved).to eq("took_action")
+      expect(urge.gave_in).to be(true)
+      expect(urge.alternative_action).to be_present
+    end
+
+    it "落ち着いた記録にも後から立てられる" do
+      urge = create(:urge, :calmed)
+
+      urge.update!(gave_in: true)
+
+      expect(urge.reload.resolved).to eq("calmed")
+      expect(urge.gave_in).to be(true)
+    end
+  end
+
+  # 「あとから記録する」で日付だけ指定された時に、created_at をどこに置くか。
+  # ここがずれると棒グラフとストリークが1日ぶん狂うが、画面は普通に表示される。
+  describe ".occurred_at" do
+    let(:now) { Time.zone.parse("2026-08-14 09:30:00") }
+
+    it "指定した日付のまま、その日として数えられる" do
+      expect(described_class.occurred_at("2026-08-13", now).to_date).to eq(Date.new(2026, 8, 13))
+    end
+
+    # 本命。朝の時刻だと Time.zone を通さなくても答えが合ってしまい、検出できない
+    # (09:30 を UTC として保存しても JST では同じ日の 18:30 にしかならない)。
+    # 夜の時刻にすると、UTC 扱いされた瞬間に JST では翌日へ回り、日付が1日ずれる。
+    it "夜の時刻でも、指定した日付のまま置かれる" do
+      night = Time.zone.parse("2026-08-14 22:00:00")
+
+      expect(described_class.occurred_at("2026-08-13", night).in_time_zone.to_date)
+        .to eq(Date.new(2026, 8, 13))
+    end
+
+    # 時刻は聞かないので「いま押した時刻」に置く。00:00 や 12:00 を作らない。
+    it "時刻は今の時刻を引き継ぐ" do
+      expect(described_class.occurred_at("2026-08-13", now).strftime("%H:%M:%S")).to eq("09:30:00")
+    end
+
+    # 深夜。UTC に落ちると日付が前日になりやすい時間帯。
+    it "日付が変わった直後(00:15)でも、その日に置かれる" do
+      midnight = Time.zone.parse("2026-08-14 00:15:00")
+
+      expect(described_class.occurred_at("2026-08-14", midnight).to_date).to eq(Date.new(2026, 8, 14))
+    end
+
+    it "空欄なら今" do
+      expect(described_class.occurred_at("", now)).to eq(now)
+    end
+
+    # date 入力が壊れた値を送ってくるのは改ざん時くらいだが、例外で 500 にはしない。
+    it "日付として読めない値なら今" do
+      expect(described_class.occurred_at("not-a-date", now)).to eq(now)
     end
   end
 
@@ -190,13 +268,13 @@ RSpec.describe Urge, type: :model do
         expect(counts.last).to eq({ date: Date.new(2026, 8, 12), count: 1 })
       end
 
-      # グラフは「衝動が来た回数」。落ち着いたか見てしまったかで数を変えない。
-      # ここで viewed を除くと、正直に記録した人だけ棒が減る画面になる。
-      it "resolved の状態を問わず数える" do
+      # グラフは「衝動が来た回数」。どう終わったかで数を変えない。
+      # ここで gave_in を除くと、正直に記録した人だけ棒が減る画面になる。
+      it "resolved の状態と gave_in を問わず数える" do
         create(:urge, user: user, created_at: Time.zone.parse("2026-08-12 08:00"))
         create(:urge, :calmed, user: user, created_at: Time.zone.parse("2026-08-12 09:00"))
         create(:urge, :took_action, user: user, created_at: Time.zone.parse("2026-08-12 10:00"))
-        create(:urge, :viewed, user: user, created_at: Time.zone.parse("2026-08-12 11:00"))
+        create(:urge, :gave_in, user: user, created_at: Time.zone.parse("2026-08-12 11:00"))
 
         expect(counts.last[:count]).to eq(4)
       end
@@ -288,10 +366,10 @@ RSpec.describe Urge, type: :model do
         expect(streak).to eq(2)
       end
 
-      # 「見てしまった」を正直に記録した日が連続から外れると、記録そのものが罰になる。
-      it "viewed だけの日も数える" do
-        urge_on(user, "2026-08-13", resolved: :viewed)
-        urge_on(user, "2026-08-12", resolved: :viewed)
+      # 「我慢できなかった」を正直に記録した日が連続から外れると、記録そのものが罰になる。
+      it "gave_in だけの日も数える" do
+        urge_on(user, "2026-08-13", gave_in: true)
+        urge_on(user, "2026-08-12", gave_in: true)
 
         expect(streak).to eq(2)
       end

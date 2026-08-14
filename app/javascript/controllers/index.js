@@ -9,3 +9,6 @@ application.register("hello", HelloController)
 
 import UrgeButtonController from "./urge_button_controller"
 application.register("urge-button", UrgeButtonController)
+
+import AutoSubmitController from "./auto_submit_controller"
+application.register("auto-submit", AutoSubmitController)
