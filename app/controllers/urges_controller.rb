@@ -18,14 +18,25 @@ class UrgesController < ApplicationController
 
   def show; end
 
-  # 衝動ボタンを押す間もなく直行した分を、あとから1件作る。
+  # 衝動ボタンを押す間もなく直行した分を、あとから記録する(requirements.md 5章 B)。
   # resolved は pending のまま。3-3-6 を通っていないので、記録すべき結果が存在しない。
-  # メモもトリガーも取らない(requirements.md 5章「最小限だと created_at と
-  # gave_in のみでも成立する」)。書きたければ詳細画面から足せる。
-  def create_gave_in
-    urge = current_user.urges.create!(gave_in: true)
+  def new_gave_in
+    @urge = current_user.urges.build(gave_in: true, occurred_on: Time.zone.today)
+  end
 
-    redirect_to urge_path(urge), notice: "記録しました"
+  def create_gave_in
+    @urge = current_user.urges.build(gave_in: true, **gave_in_new_params)
+    @urge.created_at = Urge.occurred_at(@urge.occurred_on)
+
+    # 未来の記録は棒グラフの窓にもストリークにも入らないので、作れてしまうと
+    # 「どこからも見えない記録」になる。form の max だけに頼らず、ここで弾く。
+    if @urge.created_at > Time.zone.now
+      flash.now[:alert] = "これから先の日付は選べません"
+      return render :new_gave_in, status: :unprocessable_content
+    end
+
+    @urge.save!
+    redirect_to urge_path(@urge), notice: "記録しました"
   end
 
   def edit; end
@@ -78,5 +89,11 @@ class UrgesController < ApplicationController
   # 入力画面から状態を送り込めるようになってしまう。
   def gave_in_params
     params.expect(urge: [ :gave_in ])
+  end
+
+  # occurred_on は列ではなく、created_at をどの日に置くかの入力。
+  # created_at を直接受け取らないのは、時刻まで送り込めるようにしないため。
+  def gave_in_new_params
+    params.expect(urge: [ :occurred_on, :memo ])
   end
 end

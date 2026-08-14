@@ -74,6 +74,47 @@ RSpec.describe Urge, type: :model do
     end
   end
 
+  # 「あとから記録する」で日付だけ指定された時に、created_at をどこに置くか。
+  # ここがずれると棒グラフとストリークが1日ぶん狂うが、画面は普通に表示される。
+  describe ".occurred_at" do
+    let(:now) { Time.zone.parse("2026-08-14 09:30:00") }
+
+    it "指定した日付のまま、その日として数えられる" do
+      expect(described_class.occurred_at("2026-08-13", now).to_date).to eq(Date.new(2026, 8, 13))
+    end
+
+    # 本命。朝の時刻だと Time.zone を通さなくても答えが合ってしまい、検出できない
+    # (09:30 を UTC として保存しても JST では同じ日の 18:30 にしかならない)。
+    # 夜の時刻にすると、UTC 扱いされた瞬間に JST では翌日へ回り、日付が1日ずれる。
+    it "夜の時刻でも、指定した日付のまま置かれる" do
+      night = Time.zone.parse("2026-08-14 22:00:00")
+
+      expect(described_class.occurred_at("2026-08-13", night).in_time_zone.to_date)
+        .to eq(Date.new(2026, 8, 13))
+    end
+
+    # 時刻は聞かないので「いま押した時刻」に置く。00:00 や 12:00 を作らない。
+    it "時刻は今の時刻を引き継ぐ" do
+      expect(described_class.occurred_at("2026-08-13", now).strftime("%H:%M:%S")).to eq("09:30:00")
+    end
+
+    # 深夜。UTC に落ちると日付が前日になりやすい時間帯。
+    it "日付が変わった直後(00:15)でも、その日に置かれる" do
+      midnight = Time.zone.parse("2026-08-14 00:15:00")
+
+      expect(described_class.occurred_at("2026-08-14", midnight).to_date).to eq(Date.new(2026, 8, 14))
+    end
+
+    it "空欄なら今" do
+      expect(described_class.occurred_at("", now)).to eq(now)
+    end
+
+    # date 入力が壊れた値を送ってくるのは改ざん時くらいだが、例外で 500 にはしない。
+    it "日付として読めない値なら今" do
+      expect(described_class.occurred_at("not-a-date", now)).to eq(now)
+    end
+  end
+
   describe "trigger" do
     it "2つの区分が定義された整数に対応している" do
       expect(described_class.triggers).to eq({ "idle" => 0, "working" => 1 })

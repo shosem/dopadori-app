@@ -18,7 +18,8 @@ RSpec.describe "Urges", type: :request do
     end
 
     it "あとからの記録も作成できない" do
-      expect { post gave_in_urges_path }.not_to change(Urge, :count)
+      expect { post gave_in_urges_path, params: { urge: { occurred_on: Time.zone.today.to_s, memo: "" } } }
+        .not_to change(Urge, :count)
     end
   end
 
@@ -225,9 +226,18 @@ RSpec.describe "Urges", type: :request do
     end
 
     # 衝動ボタンを押す間もなく直行した分を、あとから記録する経路(requirements.md 5章 B)。
-    describe "あとから1件記録する(create_gave_in)" do
+    describe "あとから記録する(new_gave_in / create_gave_in)" do
+      let(:today) { Time.zone.today.to_s }
+
+      it "入力画面が開ける" do
+        get gave_in_urges_path
+
+        expect(response).to have_http_status(:ok)
+      end
+
       it "gave_in が立った記録が1件作られる" do
-        expect { post gave_in_urges_path }.to change(user.urges, :count).by(1)
+        expect { post gave_in_urges_path, params: { urge: { occurred_on: today, memo: "" } } }
+          .to change(user.urges, :count).by(1)
 
         expect(user.urges.order(:id).last.gave_in).to be(true)
       end
@@ -235,22 +245,50 @@ RSpec.describe "Urges", type: :request do
       # 3-3-6 を通っていないので、記録すべき「結果」が存在しない。
       # ここで calmed などを入れると、やっていないことを記録することになる。
       it "resolved は pending のまま" do
-        post gave_in_urges_path
+        post gave_in_urges_path, params: { urge: { occurred_on: today, memo: "" } }
 
         expect(user.urges.order(:id).last).to be_pending
       end
 
+      it "メモも一緒に保存できる" do
+        post gave_in_urges_path, params: { urge: { occurred_on: today, memo: "広告を見てしまって" } }
+
+        expect(user.urges.order(:id).last.memo).to eq("広告を見てしまって")
+      end
+
       it "作った記録の詳細へ飛ぶ" do
-        post gave_in_urges_path
+        post gave_in_urges_path, params: { urge: { occurred_on: today, memo: "" } }
 
         expect(response).to redirect_to(urge_path(user.urges.order(:id).last))
         expect(flash[:notice]).to eq("記録しました")
       end
 
+      # 遡って記録した分は、その日の棒として立つ。今日に寄せてしまうと
+      # 「昨日の衝動が今日に記録される」ことになり、振り返りが実態とずれる。
+      it "遡った日付を指定すると、その日の記録として入る" do
+        travel_to(Time.zone.parse("2026-08-14 09:30")) do
+          post gave_in_urges_path, params: { urge: { occurred_on: "2026-08-11", memo: "" } }
+
+          expect(user.urges.order(:id).last.created_at.in_time_zone.to_date)
+            .to eq(Date.new(2026, 8, 11))
+        end
+      end
+
+      # 未来の記録は棒グラフの窓にもストリークにも入らず、どこからも見えなくなる。
+      # form の max はブラウザ任せなので、サーバ側で弾けていることを見る。
+      it "未来の日付では作られない" do
+        travel_to(Time.zone.parse("2026-08-14 09:30")) do
+          expect { post gave_in_urges_path, params: { urge: { occurred_on: "2026-08-15", memo: "" } } }
+            .not_to change(user.urges, :count)
+
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+      end
+
       # 棒グラフとストリークは created_at だけを見るので、この経路の記録も同じように数える。
       # ここが数えられないと、正直に記録した日だけ棒が立たない画面になる。
       it "その日の集計に入る" do
-        post gave_in_urges_path
+        post gave_in_urges_path, params: { urge: { occurred_on: today, memo: "" } }
 
         expect(user.urges.daily_counts.last[:count]).to eq(1)
       end

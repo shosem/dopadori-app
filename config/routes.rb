@@ -27,6 +27,7 @@ Rails.application.routes.draw do
       # 衝動ボタンを押す間もなく直行した分を、あとから1件作る(requirements.md 5章 B)。
       # create(連打完了で作る)と混ぜない。混ぜると、あの create! が
       # 「何が起きて作られた記録か」を表さなくなる。
+      get :gave_in, action: :new_gave_in
       post :gave_in, action: :create_gave_in
     end
   end

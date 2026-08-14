@@ -1,0 +1,44 @@
+<%#
+  衝動ボタンを押す間もなく直行した分を、あとから記録する画面(requirements.md 5章 B)。
+  責めない。ここはユーザーが最も自己嫌悪を感じやすい瞬間に触れる画面なので、
+  警告色も、記録を促す文言も置かない。
+%>
+
+<div class="flex flex-col gap-6">
+  <div>
+    <h1 class="text-xl font-semibold text-ink">我慢できなかったことを記録する</h1>
+
+    <p class="mt-2 text-sm leading-relaxed text-ink-sub">
+      衝動ボタンを押す間もなかったときに、あとから残せます。
+    </p>
+  </div>
+
+  <%= form_with model: @urge, url: gave_in_urges_path, method: :post,
+        class: "flex flex-col gap-6" do |f| %>
+    <div class="space-y-3">
+      <%= f.label :occurred_on, "いつ", class: "block text-sm font-medium text-ink-sub" %>
+
+      <%# 時刻は聞かない。その日の「いま押した時刻」に置く(Urge.occurred_at)。
+          max で未来を選べなくするが、ブラウザ任せにはせずコントローラでも弾く。 %>
+      <%= f.date_field :occurred_on,
+            max: Time.zone.today,
+            class: "w-full rounded-card border border-outline/40 bg-raised px-5 py-4 text-ink
+                    focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden" %>
+    </div>
+
+    <div class="space-y-3">
+      <%= f.label :memo, "メモ(任意)", class: "block text-sm font-medium text-ink-sub" %>
+
+      <%= f.text_area :memo, rows: 4, placeholder: "どんなきっかけだったかな？",
+            class: "w-full resize-none rounded-card border border-outline/40 bg-raised p-5
+                    text-ink placeholder:text-ink-sub/70
+                    focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden" %>
+    </div>
+
+    <%= f.submit "記録する",
+          class: "w-full cursor-pointer rounded-card bg-primary py-5 text-lg font-medium text-white
+                  shadow-soft transition-transform active:scale-[0.98]" %>
+  <% end %>
+
+  <%= link_to "やめる", root_path, class: "text-center text-sm text-ink-sub" %>
+</div>
