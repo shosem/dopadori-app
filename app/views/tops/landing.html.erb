@@ -1,0 +1,93 @@
+<%#
+  未ログインで / を開いた人に出す画面。ここが初見の人の最初の1枚になる。
+
+  ヘッダーもフッターナビも未ログインでは出ないので、ロゴをここで出す。
+
+  並びは「決める要素が先、詳細が後」。ロゴ・見出し・円・ボタンまでを
+  スクロールなしで見せ、使い方の説明はその下に置く。
+  ボタンが画面外に落ちていると、読み終える前に離脱される。
+%>
+
+<div class="flex flex-col gap-5 text-center">
+  <p class="text-3xl font-semibold tracking-tight text-primary">Dopadori</p>
+
+  <%#
+    「衝動」だけでは何の話か伝わらないので、対象を具体的に挙げる。
+    ここがこの画面の唯一の見出しになる。文字を大きくしすぎないのは、
+    この画面が電車や職場でも開かれるため(2026/08/15 決定)。
+    情報は同じまま、画面を開くハードルだけ下げたい。
+  %>
+  <h1 class="text-lg font-medium leading-relaxed text-ink">
+    タバコ・お酒・SNS・ポルノなど<br>やめたいのにやめられないものへの衝動を<br>他の行動で紛らわせましょう
+  </h1>
+
+  <%# アプリの顔。押せそうに見えるが操作はしない。体験は「試してみる」から。
+      内側の比率は衝動ボタン画面と同じ(円が枠の約6割) %>
+  <div class="relative mx-auto flex h-36 w-36 items-center justify-center" aria-hidden="true">
+    <div class="absolute inset-0 rounded-full border border-primary/15"></div>
+    <div class="absolute inset-2.5 rounded-full border border-primary/25"></div>
+    <div class="h-22 w-22 rounded-full bg-primary-container shadow-soft"></div>
+  </div>
+
+  <%# 試してみる を左に置くのは、こちらのほうがハードルが低く、先に読まれるため。
+      TODO: /try を作ったらここを差し替える(いまは押しても何も起きない) %>
+  <div class="grid grid-cols-2 gap-3">
+    <%= link_to "試してみる", "#",
+          class: "block rounded-btn bg-primary-soft py-4 text-center font-medium text-primary
+                  transition-transform active:scale-[0.98]" %>
+
+    <%= link_to "はじめる", new_user_registration_path,
+          class: "block rounded-btn bg-primary py-4 text-center font-medium text-white
+                  shadow-soft transition-transform active:scale-[0.98]" %>
+  </div>
+
+  <p class="text-sm text-ink-sub">
+    アカウントをお持ちの方は
+    <%= link_to "ログイン", new_user_session_path, class: "text-primary underline" %>
+  </p>
+
+  <%#
+    ここから下はスクロールして読む詳細。上のボタンで決めた人は読まなくてよい。
+    ステップの文言は、実際のボタンの文字をそのまま使う。
+    説明で読んだ言葉がそのまま次の画面に出てくるので、初見の人が迷わない。
+  %>
+  <div class="mt-3">
+    <p class="mb-2 text-sm text-ink-sub">使い方</p>
+
+    <ol class="flex flex-col gap-3.5 rounded-card border border-outline/40 bg-card px-5 py-5 text-left">
+      <li class="grid grid-cols-[auto_1fr] items-start gap-3">
+        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-soft
+                     text-xs font-bold text-primary tabular-nums">1</span>
+        <span class="text-ink">衝動が来たら <span class="font-semibold text-primary">衝動が来た</span> を押す</span>
+      </li>
+
+      <li class="grid grid-cols-[auto_1fr] items-start gap-3">
+        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-soft
+                     text-xs font-bold text-primary tabular-nums">2</span>
+        <span class="text-ink">
+          円を押すと 3-3-6 呼吸が始まる
+          <span class="mt-0.5 block text-xs text-ink-sub">3セット・約36秒</span>
+        </span>
+      </li>
+
+      <%# 連打はこのアプリの中心の動作なので、他の説明にぶら下げず独立した1手にする。
+          主色にはしない(ボタン名と同じ扱いになり、押す対象と誤解される) %>
+      <li class="grid grid-cols-[auto_1fr] items-start gap-3">
+        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-soft
+                     text-xs font-bold text-primary tabular-nums">3</span>
+        <span class="text-ink">その間ずっと、円を<span class="font-semibold">全力で連打する</span></span>
+      </li>
+
+      <li class="grid grid-cols-[auto_1fr] items-start gap-3">
+        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-soft
+                     text-xs font-bold text-primary tabular-nums">4</span>
+        <span class="text-ink">
+          落ち着いたら <span class="font-semibold text-primary">落ち着いた</span>
+          <span class="mt-0.5 block text-xs text-ink-sub">
+            そこで終わり。まだなら <span class="font-semibold text-primary">代わりのことをする</span> を選ぶ
+          </span>
+        </span>
+      </li>
+    </ol>
+  </div>
+</div>
