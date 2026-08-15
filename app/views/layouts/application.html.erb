@@ -41,9 +41,11 @@
 
     <%= render "shared/header", focus_mode: focus_mode if user_signed_in? %>
 
+    <%# 余白は application.tailwind.css の --chrome-top / --chrome-bottom から出す。
+        ヘッダーやナビの高さを変えた時に、ここと各画面が一緒に追従する。 %>
     <main class="mx-auto max-w-md px-6
-                 <%= user_signed_in? ? "pt-[calc(5.5rem+env(safe-area-inset-top))]" : "pt-8" %>
-                 <%= show_nav ? "pb-[calc(6rem+env(safe-area-inset-bottom))]" : "pb-8" %>">
+                 <%= user_signed_in? ? "pt-[var(--chrome-top)]" : "pt-8" %>
+                 <%= show_nav ? "pb-[var(--chrome-bottom)]" : "pb-[calc(var(--gutter)+env(safe-area-inset-bottom))]" %>">
       <%#
         flash は main の中に置く。body 直下だと、fixed なヘッダーの裏に潜って
         見えないまま main だけが押し下げられる(実際にそうなっていた)。

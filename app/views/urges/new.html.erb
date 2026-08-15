@@ -3,7 +3,11 @@
     ヘッダーのロゴは残るので、押す前に気が変わった人はそこから戻れる。 %>
 <% content_for :focus_mode, true %>
 
-<div class="flex flex-col items-center gap-10 py-8" data-controller="urge-button">
+<%# ナビを出さない画面なので --content-h-bare に収める。
+    justify-between で3要素を上下に散らし、余った縦をリングの周りに逃がす。
+    ここが溢れると 3-3-6 の説明が画面外に落ちる(実機で判明)。 %>
+<div class="flex min-h-[var(--content-h-bare)] flex-col items-center justify-between gap-6"
+     data-controller="urge-button">
 
   <%# フェーズが変わるたびに書き換わるので、読み上げを追従させる %>
   <p class="min-h-9 text-2xl font-semibold text-primary"

@@ -66,6 +66,30 @@
 
 [data-phase], button { -webkit-tap-highlight-color: transparent; }
 
+/* 固定ヘッダー/フッターの高さと、その内側で実際に使える縦幅。
+   これまで各画面が自前で 70vh などを持っていて、固定クロームのぶんを
+   考慮できておらず、iPhone で下が切れていた(実機で判明)。
+
+   vh ではなく dvh を使う。iOS Safari の vh はブラウザUIの下も含むため、
+   見えている範囲より大きい値になり、必ず溢れる。
+
+   ヘッダーの高さをここに集約したので、_header の h-14 を変えたら
+   main の余白も各画面の高さも自動で追従する。 */
+:root {
+  --header-h: 3.5rem;   /* _header の h-14 */
+  --nav-h: 4rem;        /* _footer_nav の実高さ(py-2.5 + アイコン + ラベル) */
+  --gutter: 2rem;       /* クロームと中身の間に空ける余白 */
+
+  --chrome-top: calc(var(--header-h) + var(--gutter) + env(safe-area-inset-top));
+  --chrome-bottom: calc(var(--nav-h) + var(--gutter) + env(safe-area-inset-bottom));
+
+  /* フッターナビがある画面で、main の中に収まる縦幅 */
+  --content-h: calc(100dvh - var(--chrome-top) - var(--chrome-bottom));
+
+  /* 衝動ボタン画面のようにナビを出さない画面 */
+  --content-h-bare: calc(100dvh - var(--chrome-top) - var(--gutter) - env(safe-area-inset-bottom));
+}
+
 /* 衝動ボタンの寸法と倍率。円・内側のリング・アニメーションを1組の値から出す。
    ビュー側で h-48(192px)、CSS で inset-6(272px)と別々に置いていたため、
    吸い切った円(268.8px)がリングに 1.2px 届かず二重線に見えていた。
