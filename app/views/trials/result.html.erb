@@ -1,0 +1,33 @@
+<%#
+  お試しを終えた人に出す画面。記録は作っていないので、ここには何も残らない。
+
+  責めない。落ち着かなかった人に「まだですか」と重ねない。
+  登録を促す文は置くが、急かす言い方はしない(design_guideline.md 原則2)。
+%>
+
+<div class="flex min-h-[var(--content-h)] flex-col justify-center gap-8 text-center">
+  <div>
+    <h1 class="text-2xl font-semibold text-primary">落ち着きましたか？</h1>
+
+    <p class="mt-4 text-sm leading-relaxed text-ink-sub">
+      記録を残すことや、代わりの行動の提案は<br>アカウント登録後にできます
+    </p>
+  </div>
+
+  <div class="flex flex-col gap-4">
+    <%= link_to "アカウントを作る", new_user_registration_path,
+          class: "block rounded-btn bg-primary py-4 text-center text-lg font-medium text-white
+                  shadow-soft transition-transform active:scale-[0.98]" %>
+
+    <%# 落ち着かなかった人がもう一度できるように置く。
+        本番のフローでは「代わりのことをする」に進むところ。 %>
+    <%= link_to "もう一度試す", try_path,
+          class: "block rounded-btn bg-primary-soft py-4 text-center font-medium text-primary
+                  transition-transform active:scale-[0.98]" %>
+  </div>
+
+  <p class="text-sm text-ink-sub">
+    アカウントをお持ちの方は
+    <%= link_to "ログイン", new_user_session_path, class: "text-primary underline" %>
+  </p>
+</div>

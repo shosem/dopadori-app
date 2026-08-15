@@ -1,0 +1,87 @@
+<%# locals: (form_url:, form_method: :post) %>
+
+<%#
+  衝動ボタン(円 + リング + 3-3-6 の説明)。本番の記録用と、ログイン不要の
+  お試し(/try)の2箇所で使う。
+
+  違いは 36秒 完了時の送り先だけなので、URL とメソッドを外から渡す。
+  Stimulus(urge_button_controller)は form の中身を見ず requestSubmit() するだけなので、
+  コントローラ側は一切変更しなくてよい。
+
+  コピーではなくパーシャルにしているのは、円・リング・寸法が2箇所に増えると
+  「押したら暗くなる」を足す時に両方直すことになるため。寸法の二重管理は一度踏んでいる。
+
+  ナビを出さない画面なので --content-h-bare に収める。
+  justify-center にしているのは、justify-between だと画面が高いほど余りが
+  そのまま要素の間に散り、PC でスカスカになるため。中央に寄せれば
+  どの画面幅でも中身がまとまったままになる。
+%>
+<div class="flex min-h-[var(--content-h-bare)] flex-col items-center justify-center gap-5"
+     data-controller="urge-button">
+
+  <div class="flex flex-col items-center gap-1">
+    <%# フェーズが変わるたびに書き換わるので、読み上げを追従させる %>
+    <p class="min-h-9 text-2xl font-semibold text-primary"
+       data-urge-button-target="label"
+       aria-live="polite">
+      青い円を押すと始まります
+    </p>
+
+    <%# 連打の指示はここに常設する。以前は一番下のカードの中にあり、円から遠く、
+        フェーズ表示より下だったので36秒のあいだ目に入らなかった。
+        押す前から出しておくことで、何をやらされるのか先に分かる。
+        Stimulus は書き換えないので、コントローラ側の変更は要らない。 %>
+    <p class="text-base text-ink-sub">全力でボタンを連打しましょう</p>
+  </div>
+
+  <%# 36秒の完了時に JS から requestSubmit() する。中身は要らない %>
+  <%= form_with url: form_url, method: form_method, data: { urge_button_target: "form" } do %><% end %>
+
+  <%# 外周のリングは動かさない(拡縮アニメーションは Day 6)。
+      内側のリングは円を包む形にして、吸い切った円がちょうど内縁に接するようにしている。
+      寸法は CSS 側の --urge-circle / --urge-scale から出しているので、
+      ここに px を書き足すとまたズレる(.urge-circle / .urge-ring を参照)。 %>
+  <div class="relative flex h-80 w-80 items-center justify-center">
+    <div class="absolute inset-0 rounded-full border border-primary/15"></div>
+
+    <div class="urge-ring flex items-center justify-center rounded-full border border-primary/25">
+      <button
+        type="button"
+        aria-label="衝動ボタン"
+        class="urge-circle relative rounded-full bg-primary-container shadow-lift select-none touch-manipulation"
+        data-urge-button-target="circle"
+        data-action="click->urge-button#start"
+      ></button>
+    </div>
+  </div>
+
+  <%#
+    3-3-6 の内訳。「連打しながら〜」の1文は上に移したので、ここは秒数だけにする。
+    数字の下に何をする秒数かを添えて、3-3-6 が何を指すか読めるようにした。
+    数値は説明であって記録ではない(CLAUDE.md §5 が禁じているのは連打回数の表示)。
+  %>
+  <div class="w-full rounded-card border border-outline/30 bg-card/70 px-6 py-5 text-center backdrop-blur-sm">
+    <div class="flex items-start justify-center gap-3">
+      <%# 3つとも同じ見た目にする。1つだけ塗りつぶすと「いまここ」に見えるが、
+          フェーズとは連動していない(連動は Day 6 で切った項目)。 %>
+      <div class="flex flex-col items-center gap-1.5">
+        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary">3</span>
+        <span class="text-xs text-ink-sub">吸う</span>
+      </div>
+
+      <span class="mt-1.5 text-ink-sub">-</span>
+
+      <div class="flex flex-col items-center gap-1.5">
+        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary">3</span>
+        <span class="text-xs text-ink-sub">止める</span>
+      </div>
+
+      <span class="mt-1.5 text-ink-sub">-</span>
+
+      <div class="flex flex-col items-center gap-1.5">
+        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary">6</span>
+        <span class="text-xs text-ink-sub">吐く</span>
+      </div>
+    </div>
+  </div>
+</div>
