@@ -1,7 +1,9 @@
 class TopsController < ApplicationController
-  before_action :authenticate_user!
-
+  # authenticate_user! は掛けない。未ログインで開いた人に説明を出すため。
+  # ここが「URLを渡された初見の人」が最初に見る画面になる。
   def top
+    return render :landing unless user_signed_in?
+
     urges = current_user.urges
 
     @streak = urges.current_streak
