@@ -1,11 +1,10 @@
 <%#
   縦を伸ばして、主役のブロックを画面の中ほどに置く。
-  ヘッダーとフッターの高さから正確に引き算する手もあるが、そうすると
-  ヘッダーの高さ 3.5rem を持つ場所が3箇所目になる(_header の h-14、
-  urges/index の sticky、ここ)。円とリングの寸法で同じ失敗をしているので、
-  高さに依存しない dvh の近似にしてある。数センチずれても困らない場所。
+  高さは application.tailwind.css の --content-h(= 100dvh から固定ヘッダー・
+  フッターナビ・セーフエリアを引いたもの)を使う。以前は 70dvh の目分量で、
+  main の余白ぶんを勘定できておらず iPhone で下が切れていた。
 %>
-<div class="flex min-h-[70dvh] flex-col">
+<div class="flex min-h-[var(--content-h)] flex-col">
   <% if @has_records %>
     <%# カードごと縦中央に置く。上に貼り付けるとボタンとの間が間延びする %>
     <div class="flex flex-1 items-center">

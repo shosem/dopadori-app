@@ -7,11 +7,11 @@
 
 <p class="text-center text-sm text-ink-sub">
   <% if controller_name == "sessions" %>
-    アカウントをお持ちでないですか?
+    アカウントをお持ちでないですか？
     <%= link_to "はじめての方はこちら", new_registration_path(resource_name),
           class: "text-primary underline" %>
   <% else %>
-    すでにアカウントをお持ちですか?
+    すでにアカウントをお持ちですか？
     <%= link_to "ログインはこちら", new_session_path(resource_name),
           class: "text-primary underline" %>
   <% end %>
