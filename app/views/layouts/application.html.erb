@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <title><%= content_for(:title) || "ドパドリ" %></title>
+    <%# 画面に出す名前は Dopadori に統一する(ヘッダーのロゴ・認証画面と揃える)。
+        docs 側の「ドパドリ」は日本語の文章中の呼び方なのでそのまま。 %>
+    <title><%= content_for(:title) || "Dopadori" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="ドパドリ">
+    <meta name="application-name" content="Dopadori">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
