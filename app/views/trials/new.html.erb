@@ -1,0 +1,7 @@
+<%# 本番の衝動ボタン画面と同じ理由でクロームを下ろす。
+    未ログインならヘッダーもナビも元から出ないが、ログイン済みの人が
+    ここに来ることもあるので明示しておく。 %>
+<% content_for :focus_mode, true %>
+
+<%# 36秒を終えたら結果画面へ。記録は作らないので GET %>
+<%= render "urges/button", form_url: try_result_path, form_method: :get %>

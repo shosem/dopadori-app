@@ -3,50 +3,5 @@
     ヘッダーのロゴは残るので、押す前に気が変わった人はそこから戻れる。 %>
 <% content_for :focus_mode, true %>
 
-<%# ナビを出さない画面なので --content-h-bare に収める。
-    justify-between で3要素を上下に散らし、余った縦をリングの周りに逃がす。
-    ここが溢れると 3-3-6 の説明が画面外に落ちる(実機で判明)。 %>
-<div class="flex min-h-[var(--content-h-bare)] flex-col items-center justify-between gap-6"
-     data-controller="urge-button">
-
-  <%# フェーズが変わるたびに書き換わるので、読み上げを追従させる %>
-  <p class="min-h-9 text-2xl font-semibold text-primary"
-     data-urge-button-target="label"
-     aria-live="polite">
-    青い円を押すと始まります
-  </p>
-
-  <%# 36秒の完了時に JS から requestSubmit() する。中身は要らない %>
-  <%= form_with url: urges_path, data: { urge_button_target: "form" } do %><% end %>
-
-  <%# 外周のリングは動かさない(拡縮アニメーションは Day 6)。
-      内側のリングは円を包む形にして、吸い切った円がちょうど内縁に接するようにしている。
-      寸法は CSS 側の --urge-circle / --urge-scale から出しているので、
-      ここに px を書き足すとまたズレる(.urge-circle / .urge-ring を参照)。 %>
-  <div class="relative flex h-80 w-80 items-center justify-center">
-    <div class="absolute inset-0 rounded-full border border-primary/15"></div>
-
-    <div class="urge-ring flex items-center justify-center rounded-full border border-primary/25">
-      <button
-        type="button"
-        aria-label="衝動ボタン"
-        class="urge-circle relative rounded-full bg-primary-container shadow-lift select-none touch-manipulation"
-        data-urge-button-target="circle"
-        data-action="click->urge-button#start"
-      ></button>
-    </div>
-  </div>
-
-  <%# 初見の人が何をすればいいか分かるように置く。数値は説明であって記録ではない %>
-  <div class="w-full rounded-card border border-outline/30 bg-card/70 p-6 text-center backdrop-blur-sm">
-    <p class="text-ink">連打しながら、3-3-6呼吸を行いましょう</p>
-
-    <div class="mt-4 flex items-center justify-center gap-2">
-      <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">3</span>
-      <span class="text-ink-sub">-</span>
-      <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary">3</span>
-      <span class="text-ink-sub">-</span>
-      <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary">6</span>
-    </div>
-  </div>
-</div>
+<%# 36秒を終えたら urges#create へ送って記録を1件作る %>
+<%= render "urges/button", form_url: urges_path %>

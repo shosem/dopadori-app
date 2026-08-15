@@ -14,6 +14,11 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "tops#top"
+
+  # ログイン不要のお試し。円を押して 3-3-6 呼吸だけ体験する(記録は作らない)。
+  # 何も保存しないので GET にしてある。POST にするとリロードで再送信の確認が出る。
+  get "try" => "trials#new", as: :try
+  get "try/result" => "trials#result", as: :try_result
   resources :alternative_actions, except: [ :show ]
   resources :urges, only: %i[ new create edit update index show ] do
     member do
