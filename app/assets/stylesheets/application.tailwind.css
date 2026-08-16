@@ -111,6 +111,43 @@
   height: calc(var(--urge-circle) * var(--urge-scale) + 2px);
 }
 
-[data-phase="inhale"] { transform: scale(var(--urge-scale)); transition: transform 3s ease-in; }
-[data-phase="hold"]   { transform: scale(var(--urge-scale)); transition: none; }
-[data-phase="exhale"] { transform: scale(1);                 transition: transform 6s ease-out; }
+/* 吐く6秒だけ円を薄くする。色相は変えない。
+   新しい hex を足さず opacity にしたのは、パレットに #47799f(背景比 4.01:1)の
+   1段上に当たる青が無いため。次に明るい #9accf6 / #b5c9db は 1.4:1 台で、
+   design_guideline.md が「押す対象に見えない」として却下した明度域に入る。
+   opacity なら背景 #e5eff9 との混色になるので、出自はパレット内のまま中間に置ける
+   (0.6 で実測 2.05:1)。薄さを変えたい時はこの数字1つだけ動かす。
+
+   影(shadow-lift)も一緒に薄くなる。影は「浮いている=押せる」を出すためのものなので
+   (design_guideline.md)、一緒に引くほうが「休んでいい」と揃う。 */
+[data-phase="inhale"] { transform: scale(var(--urge-scale)); transition: transform 3s ease-in, opacity 1s ease-out; }
+[data-phase="hold"]   { transform: scale(var(--urge-scale)); transition: opacity 1s ease-out; }
+[data-phase="exhale"] { transform: scale(1); opacity: 0.6;   transition: transform 6s ease-out, opacity 1s ease-out; }
+
+/* 押した手応え。深さ(--press-depth)と戻りの速さ(--press-speed)をフェーズごとに変える。
+   吸う→止める→吐く で一段ずつ薄く・鈍くなり、36秒が興奮から鎮静へ着地する。
+
+   吐く6秒を浅くしているのは、連打をやめさせるのではなく、返る反応が静かになることで
+   手が自然に緩むようにするため。「押さないでください」と指示すると、我慢させない
+   アプリの中でそこだけ我慢を要求する6秒になる。
+
+   速さも効いている。短いほど1回ごとの境目が立ってクリック感になり、長いほど
+   ぼやけて「押しても増えない」感触になる。吐く時に勢いへ報酬を与えないための鈍さ。
+
+   base(=まだ押していない状態と吸う3秒)が一番深い。最初のタップは吸うの入口なので、
+   押す前と吸うで値を変える理由がない。 */
+.urge-circle                      { --press-depth: 0.66; --press-speed: 160ms; }
+.urge-circle[data-phase="hold"]   { --press-depth: 0.86; --press-speed: 220ms; }
+.urge-circle[data-phase="exhale"] { --press-depth: 0.96; --press-speed: 320ms; }
+
+/* 動かすのは filter であって transform ではない。円は data-phase の transform で
+   3秒/6秒かけて拡縮している最中なので、同じプロパティに触ると呼吸のほうが飛ぶ。
+   同じ理由で、上の transition に all を書いてはいけない(暗さの変化まで6秒かかる)。 */
+@keyframes urge-press {
+  from { filter: brightness(var(--press-depth)); }
+  to   { filter: brightness(1); }
+}
+
+/* transition ではなく animation なのは、連打の間隔が戻りの時間より短い時に
+   「暗いまま張り付く」のを避けるため。JS がクラスを付け直すたびに頭から再生される。 */
+.urge-circle.is-pressed { animation: urge-press var(--press-speed) ease-out; }

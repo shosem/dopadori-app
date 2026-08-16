@@ -20,18 +20,29 @@
      data-controller="urge-button">
 
   <div class="flex flex-col items-center gap-1">
-    <%# フェーズが変わるたびに書き換わるので、読み上げを追従させる %>
-    <p class="min-h-9 text-2xl font-semibold text-primary"
+    <%# フェーズが変わるたびに書き換わるので、読み上げを追従させる。
+
+        2行ぶんの高さを先に確保しておく。吐くフェーズの文言だけ2行になるので、
+        1行ぶんしか取っていないと12秒ごとに下の円が上下に跳ねる。
+        text-center は、2行になった時に短いほうが長いほうの中央に来るようにするため。
+
+        whitespace-pre-line は、Stimulus 側の文字列に入れた \n を改行として扱うためのもの。
+        ブラウザ任せの折り返しだと画面幅で切れる位置が変わるので、読点の後ろに固定している。
+        この指定があるとソース中の改行もそのまま改行になるので、初期表示の文言は
+        タグと同じ行に置く(下で改行すると、その空行がそのまま出る)。 %>
+    <p class="min-h-16 whitespace-pre-line text-center text-2xl font-semibold text-primary"
        data-urge-button-target="label"
-       aria-live="polite">
-      青い円を押すと始まります
-    </p>
+       aria-live="polite">青い円を押すと始まります</p>
 
     <%# 連打の指示はここに常設する。以前は一番下のカードの中にあり、円から遠く、
         フェーズ表示より下だったので36秒のあいだ目に入らなかった。
         押す前から出しておくことで、何をやらされるのか先に分かる。
-        Stimulus は書き換えないので、コントローラ側の変更は要らない。 %>
-    <p class="text-base text-ink-sub">全力でボタンを連打しましょう</p>
+
+        「連打するときは」を頭に付けたのは、吐くフェーズで上の文言が
+        「連打を休んで」に変わるため。「全力で連打しましょう」のままだと、
+        画面が同時に連打しろと休めを言うことになる。
+        条件付きの言い方にすれば固定のままで矛盾しないので、Stimulus は書き換えない。 %>
+    <p class="text-base text-ink-sub">連打するときは、全力で連打しましょう</p>
   </div>
 
   <%# 36秒の完了時に JS から requestSubmit() する。中身は要らない %>
@@ -40,7 +51,12 @@
   <%# 外周のリングは動かさない(拡縮アニメーションは Day 6)。
       内側のリングは円を包む形にして、吸い切った円がちょうど内縁に接するようにしている。
       寸法は CSS 側の --urge-circle / --urge-scale から出しているので、
-      ここに px を書き足すとまたズレる(.urge-circle / .urge-ring を参照)。 %>
+      ここに px を書き足すとまたズレる(.urge-circle / .urge-ring を参照)。
+
+      アクションが2つあるのは、押した手応えを pointerdown で返すため。click は指を
+      離すまで発火しないので、連打だと手応えが1テンポ遅れる。ただし pointerdown は
+      キーボード(Enter / Space)では飛んでこないので、開始用に click も残す。
+      start() は2度目以降を弾くので、両方走っても二重に始まらない。 %>
   <div class="relative flex h-80 w-80 items-center justify-center">
     <div class="absolute inset-0 rounded-full border border-primary/15"></div>
 
@@ -50,7 +66,7 @@
         aria-label="衝動ボタン"
         class="urge-circle relative rounded-full bg-primary-container shadow-lift select-none touch-manipulation"
         data-urge-button-target="circle"
-        data-action="click->urge-button#start"
+        data-action="pointerdown->urge-button#press click->urge-button#start"
       ></button>
     </div>
   </div>
@@ -82,6 +98,17 @@
         <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary">6</span>
         <span class="text-xs text-ink-sub">吐く</span>
       </div>
+    </div>
+
+    <%# 押す前に読む説明。上の常設行(「連打するときは、全力で連打しましょう」)とは
+        役割が違うので、連打の話が2箇所に出るのは意図的。あちらは36秒の最中に
+        目に入る一言なので短くしてあり、こちらは始める前に全体像を渡す。
+
+        「3回」は進捗ではなく長さの予告。押す前に読み終わる静的な文で、36秒のあいだ
+        変化しない。進行中の数字を出さない方針(design_guideline.md 174行)には触れない。 %>
+    <div class="mt-4 space-y-1 text-sm text-ink-sub">
+      <p>吸う・止めるときは、ボタンを連打しましょう</p>
+      <p>これを3セットします</p>
     </div>
   </div>
 </div>
