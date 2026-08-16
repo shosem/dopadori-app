@@ -42,10 +42,29 @@
     <%= render "shared/header", focus_mode: focus_mode if user_signed_in? %>
 
     <%# 余白は application.tailwind.css の --chrome-top / --chrome-bottom から出す。
-        ヘッダーやナビの高さを変えた時に、ここと各画面が一緒に追従する。 %>
-    <main class="mx-auto max-w-md px-6
-                 <%= user_signed_in? ? "pt-[var(--chrome-top)]" : "pt-8" %>
-                 <%= show_nav ? "pb-[var(--chrome-bottom)]" : "pb-[calc(var(--gutter)+env(safe-area-inset-bottom))]" %>">
+        ヘッダーやナビの高さを変えた時に、ここと各画面が一緒に追従する。
+
+        集中画面(衝動ボタン / お試し)だけ --gutter-focus まで詰める。中身が固定の高さで、
+        小さい端末ほどそのまま縦に溢れるため。上下を同じ値にして左右対称にしてある。
+        未ログイン時の上はヘッダー自体が無く、この余白は「画面の縁からの距離」に
+        意味が変わるので触らない。
+
+        三項演算子を入れ子にすると読めなくなるので、条件はここで解いておく。 %>
+    <% pad_top = if !user_signed_in?
+                   "pt-8"
+                 elsif focus_mode
+                   "pt-[var(--chrome-top-focus)]"
+                 else
+                   "pt-[var(--chrome-top)]"
+                 end %>
+    <% pad_bottom = if show_nav
+                      "pb-[var(--chrome-bottom)]"
+                    elsif focus_mode
+                      "pb-[calc(var(--gutter-focus)+env(safe-area-inset-bottom))]"
+                    else
+                      "pb-[calc(var(--gutter)+env(safe-area-inset-bottom))]"
+                    end %>
+    <main class="mx-auto max-w-md px-6 <%= pad_top %> <%= pad_bottom %>">
       <%#
         flash は main の中に置く。body 直下だと、fixed なヘッダーの裏に潜って
         見えないまま main だけが押し下げられる(実際にそうなっていた)。
