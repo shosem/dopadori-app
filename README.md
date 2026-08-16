@@ -7,7 +7,7 @@ SNS・ポルノ・タバコ・お酒への衝動を、**我慢させるのでは
 
 ![デモ画面](https://github.com/user-attachments/assets/159f82b8-5240-4c01-a6be-fed1f492c8d7)
 <p>
-  <img width="400" height="518" alt="Image" src="https://github.com/user-attachments/assets/36ffaa8f-343a-43b7-97b3-05317b31ecdd" />
+  <img width="400" height="609" alt="Image" src="https://github.com/user-attachments/assets/eb2f389f-b75a-476f-b6c1-75f1d6fe7f5e" />
   <img width="400" height="609" alt="Image" src="https://github.com/user-attachments/assets/3387d85e-1002-4431-bd31-620506aab619" />
   <img width="400" height="609" alt="Image" src="https://github.com/user-attachments/assets/480e802c-3189-4410-b78b-4a804e44337c" />
 </p>
